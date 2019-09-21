@@ -267,6 +267,10 @@ Group InitPair (Tile a, Tile b) {
         std::swap(a, b);
     return Group(GroupType::Pair, a.Color, a.Value, b.isAka, 0);
 }
+/*
+state = 0 无副露
+state = 1,2,3 碰/荣和下家，对家，上家
+*/
 Group InitTriplet (Tile a, Tile b, Tile c, int state = 0) {
     if (a != b || a != c)
         return NullGroup;
@@ -280,6 +284,13 @@ Group InitTriplet (Tile a, Tile b, Tile c, int state = 0) {
     }
     return Group(GroupType::Triplet, a.Color, a.Value, (b.isAka << 1) | c.isAka, state);
 }
+/*
+state = 0 暗杠
+state = 1,2,3 明杠下家，对家，上家
+state = 13,14,15 加杠，第一张牌来自下家，对家，上家
+state = 21,22,23 加杠，第二张牌来自下家，对家，上家
+state = 29,30,31 加杠，第一张牌来自下家，对家，上家
+*/
 Group InitKan (Tile a, Tile b, Tile c, Tile d, int state = 0) {
     if (a != b || a != c || a != d)
         return NullGroup;
@@ -308,6 +319,10 @@ Group InitKan (Tile a, Tile b, Tile c, Tile d, int state = 0) {
     }
     return Group(GroupType::Kan, a.Color, a.Value, (c.isAka << 1) | d.isAka, state);
 }
+/*
+state = 0 无副露
+state = 1 吃上家
+*/
 Group InitSequence (Tile a, Tile b, Tile c, int state = 0) {
     if (a.Color != b.Color || a.Color != c.Color || a.Color == 'z')
         return NullGroup;
