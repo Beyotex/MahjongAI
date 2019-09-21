@@ -7,8 +7,9 @@ void TestYaku () {
     std::cout << ProcessHan(Yaku::Rinshan, 1) << ' '
      << ProcessHan(Yaku::Pinfu, 1) << ' '
      << ProcessHan(Yaku::Ryanpeiko, 0) << ' '
-     << ProcessHan(Yaku::HalfFlush, 1) << ' '
-     << ProcessHan(Yaku::Suuankou, 1) << ' '
+     << ProcessHan(Yaku::NagashiMangan, 1) << ' '
+     << ProcessHan(Yaku::FullFlush, 1) << ' '
+     << ProcessHan(Yaku::FourConcealedTriplets, 1) << ' '
      << ProcessHan(Yaku::BigThreeDrangons, 1) << ' '
      << ProcessHan(Yaku::NineGates9Wait, 0) << std::endl;
 }
@@ -29,7 +30,7 @@ void TestTile () {
 }
 
 int main () {
-    // TestYaku();
+    TestYaku();
     TestTile();
 }
 
