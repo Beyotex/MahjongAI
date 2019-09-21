@@ -37,7 +37,12 @@ void TestGroup () {
      << InitSequence(Tile("4p"), Tile("6p"), Tile("0p")).Print() << ' '
      << InitSequence(Tile("4p"), Tile("6p"), Tile("0p"), 1).Print() << ' '
      << InitSequence(Tile("0p"), Tile("6p"), Tile("4p")).Print() << ' '
-     << InitSequence(Tile("4p"), Tile("0p"), Tile("6p"), 1).Print() << ' '<< std::endl;
+     << InitSequence(Tile("4p"), Tile("0p"), Tile("6p"), 1).Print() << ' '<< std::endl
+     << InitTriplet(Tile("3z"), Tile("3z"), Tile("3s")).Print() << ' '
+     << InitTriplet(Tile("0p"), Tile("5p"), Tile("5p")).Print() << ' '
+     << InitTriplet(Tile("5p"), Tile("0p"), Tile("5p"), 1).Print() << ' '
+     << InitTriplet(Tile("5p"), Tile("5p"), Tile("0p"), 2).Print() << ' '
+     << InitTriplet(Tile("0p"), Tile("5p"), Tile("5p"), 3).Print() << ' '<< std::endl;
 }
 
 int main () {

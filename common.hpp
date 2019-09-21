@@ -127,6 +127,36 @@ struct Group {
                 Name.push_back((AkaState & 2) ? '0' : Value + '1');
                 Name.push_back((AkaState & 1) ? '0' : Value + '2');
             }
+        } else if (Type == GroupType::Triplet) {
+            switch (State) {
+                case 3:
+                    Name.push_back('(');
+                    Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                    Name.push_back(')');
+                    Name.push_back(Value + '0');
+                    Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                    break;
+                case 2:
+                    Name.push_back(Value + '0');
+                    Name.push_back('(');
+                    Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                    Name.push_back(')');
+                    Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                    break;
+                case 1:
+                    Name.push_back(Value + '0');
+                    Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                    Name.push_back('(');
+                    Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                    Name.push_back(')');
+                    break;
+                default:
+                    Name.push_back(Value + '0');
+                    Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                    Name.push_back((AkaState & 1) ? '0' : Value + '0');
+            }
+        } else {
+            
         }
         Name.push_back(Color);
         return Name;
@@ -140,17 +170,37 @@ Group InitPair (Tile a, Tile b) {
         std::swap(a, b);
     return Group(GroupType::Pair, a.Color, a.Value, b.isAka, 0);
 }
-Group InitTriplet (Tile a, Tile b, Tile c, int state) {
+Group InitTriplet (Tile a, Tile b, Tile c, int state = 0) {
     if (a != b || a != c)
         return NullGroup;
     if (a > b)
         std::swap(a, b);
+    if (!state) {
+        if (a > c)
+            std::swap(a, c);
+        if (b > c)
+            std::swap(b, c);
+    }
     return Group(GroupType::Triplet, a.Color, a.Value, (b.isAka << 1) | c.isAka, state);
 }
-Group InitKan (Tile a, Tile b, Tile c, Tile d, int state) {
+Group InitKan (Tile a, Tile b, Tile c, Tile d, int state = 0) {
     if (a != b || a != c || a != d)
         return NullGroup;
-    return Group(GroupType::Triplet, a.Color, a.Value, (a.isAka << 3) | (b.isAka << 2) | (c.isAka << 1) | d.isAka, state);
+    if (a > b)
+        std::swap(a, b);
+    if (a > c)
+        std::swap(a, c);
+    if (b > c)
+        std::swap(b, c);
+    if (!state) {
+        if (a > d)
+            std::swap(a, d);
+        if (b > d)
+            std::swap(b, d);
+        if (c > d)
+            std::swap(c, d);
+    }
+    return Group(GroupType::Triplet, a.Color, a.Value, (c.isAka << 1) | d.isAka, state);
 }
 Group InitSequence (Tile a, Tile b, Tile c, int state = 0) {
     if (a.Color != b.Color || a.Color != c.Color || a.Color == 'z')
