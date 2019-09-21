@@ -73,7 +73,7 @@ enum struct Yaku {
     Chiihou = 0xc4,
 };
 
-int ProceedsHan (const Yaku &Num, const bool& isOpen) {
+int ProcessHan (const Yaku &Num, const bool& isOpen) {
     int Han = (sc <int> (Num) & 0xf0) >> 4;
     if (Han < 9)
         switch (Han % 3) {
