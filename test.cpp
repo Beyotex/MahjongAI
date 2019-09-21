@@ -37,12 +37,21 @@ void TestGroup () {
      << InitSequence(Tile("4p"), Tile("6p"), Tile("0p")).Print() << ' '
      << InitSequence(Tile("4p"), Tile("6p"), Tile("0p"), 1).Print() << ' '
      << InitSequence(Tile("0p"), Tile("6p"), Tile("4p")).Print() << ' '
-     << InitSequence(Tile("4p"), Tile("0p"), Tile("6p"), 1).Print() << ' '<< std::endl
+     << InitSequence(Tile("4p"), Tile("0p"), Tile("6p"), 1).Print() << std::endl
      << InitTriplet(Tile("3z"), Tile("3z"), Tile("3s")).Print() << ' '
      << InitTriplet(Tile("0p"), Tile("5p"), Tile("5p")).Print() << ' '
      << InitTriplet(Tile("5p"), Tile("0p"), Tile("5p"), 1).Print() << ' '
      << InitTriplet(Tile("5p"), Tile("5p"), Tile("0p"), 2).Print() << ' '
-     << InitTriplet(Tile("0p"), Tile("5p"), Tile("5p"), 3).Print() << ' '<< std::endl;
+     << InitTriplet(Tile("0p"), Tile("5p"), Tile("5p"), 3).Print() << std::endl
+     << InitKan(Tile("3z"), Tile("3z"), Tile("3s"), Tile("3s")).Print() << ' '
+     << InitKan(Tile("0p"), Tile("5p"), Tile("5p"), Tile("5p")).Print() << ' '
+     << InitKan(Tile("5p"), Tile("5p"), Tile("0p"), Tile("5p"), 1).Print() << ' '
+     << InitKan(Tile("5p"), Tile("5p"), Tile("5p"), Tile("0p"), 2).Print() << ' '
+     << InitKan(Tile("5p"), Tile("0p"), Tile("5p"), Tile("5p"), 3).Print() << ' '
+     << InitKan(Tile("0p"), Tile("5p"), Tile("5p"), Tile("5p"), 24 + 5).Print() << ' '
+     << InitKan(Tile("5p"), Tile("5p"), Tile("5p"), Tile("0p"), 24 + 5).Print() << ' '
+     << InitKan(Tile("5p"), Tile("5p"), Tile("0p"), Tile("5p"), 16 + 6).Print() << ' '
+     << InitKan(Tile("5p"), Tile("5p"), Tile("5p"), Tile("0p"), 8 + 7).Print() << std::endl;
 }
 
 int main () {

@@ -98,6 +98,7 @@ struct Group {
         if (Type == GroupType::NullType)
             return "NULL Group";
         std::string Name;
+        bool Changed = 0;
         if (Type == GroupType::Pair) {
             Name.push_back(Value + '0');
             Name.push_back((AkaState & 1) ? '0' : Value + '0');
@@ -152,13 +153,109 @@ struct Group {
                     break;
                 default:
                     Name.push_back(Value + '0');
-                    Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                    Name.push_back(Value + '0');
                     Name.push_back((AkaState & 1) ? '0' : Value + '0');
             }
         } else {
-            
+            if (!State) {
+                Changed = 1;
+                Color -= 32;
+                Name.push_back(Value + '0');
+                Name.push_back(Value + '0');
+                Name.push_back(Value + '0');
+                Name.push_back((AkaState & 1) ? '0' : Value + '0');
+            } else {
+                switch (State & 7) {
+                    case 1:
+                        Name.push_back(Value + '0');
+                        Name.push_back(Value + '0');
+                        Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                        Name.push_back('(');
+                        Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                        Name.push_back(')');
+                        break;
+                    case 2:
+                        Name.push_back(Value + '0');
+                        Name.push_back(Value + '0');
+                        Name.push_back('(');
+                        Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                        Name.push_back(')');
+                        Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                        break;
+                    case 3:
+                        Name.push_back('(');
+                        Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                        Name.push_back(')');
+                        Name.push_back(Value + '0');
+                        Name.push_back(Value + '0');
+                        Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                        break;
+                    case 5:
+                        switch(State >> 3) {
+                            case 3: case 2:
+                                Name.push_back(Value + '0');
+                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                                Name.push_back('(');
+                                Name.push_back(Value + '0');
+                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                                Name.push_back(')');
+                                break;
+                            case 1:
+                                Name.push_back(Value + '0');
+                                Name.push_back(Value + '0');
+                                Name.push_back('(');
+                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                                Name.push_back(')');
+                                break;
+                        }
+                        break;
+                    case 6:
+                        switch(State >> 3) {
+                            case 3: case 2:
+                                Name.push_back(Value + '0');
+                                Name.push_back('(');
+                                Name.push_back(Value + '0');
+                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                                Name.push_back(')');
+                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                                break;
+                            case 1:
+                                Name.push_back(Value + '0');
+                                Name.push_back('(');
+                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                                Name.push_back(')');
+                                Name.push_back(Value + '0');
+                                break;
+                        }
+                        break;
+                    case 7:
+                        switch(State >> 3) {
+                            case 3: case 2:
+                                Name.push_back('(');
+                                Name.push_back(Value + '0');
+                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                                Name.push_back(')');
+                                Name.push_back(Value + '0');
+                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                                break;
+                            case 1:
+                                Name.push_back('(');
+                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                                Name.push_back(')');
+                                Name.push_back(Value + '0');
+                                Name.push_back(Value + '0');
+                                break;
+                        }
+                        break;
+                }
+            }
         }
         Name.push_back(Color);
+        if (Changed)
+            Color += 32;
         return Name;
     }
 };
@@ -186,12 +283,21 @@ Group InitTriplet (Tile a, Tile b, Tile c, int state = 0) {
 Group InitKan (Tile a, Tile b, Tile c, Tile d, int state = 0) {
     if (a != b || a != c || a != d)
         return NullGroup;
-    if (a > b)
+    if (a > b) {
         std::swap(a, b);
-    if (a > c)
+        if (state >> 3 == 3)
+            state -= 8;
+    }
+    if (a > c) {
         std::swap(a, c);
-    if (b > c)
+        if (state >> 3 == 3)
+            state -= 16;
+    }
+    if (b > c) {
         std::swap(b, c);
+        if (state >> 3 == 2)
+            state -= 8;
+    }
     if (!state) {
         if (a > d)
             std::swap(a, d);
@@ -200,7 +306,7 @@ Group InitKan (Tile a, Tile b, Tile c, Tile d, int state = 0) {
         if (c > d)
             std::swap(c, d);
     }
-    return Group(GroupType::Triplet, a.Color, a.Value, (c.isAka << 1) | d.isAka, state);
+    return Group(GroupType::Kan, a.Color, a.Value, (c.isAka << 1) | d.isAka, state);
 }
 Group InitSequence (Tile a, Tile b, Tile c, int state = 0) {
     if (a.Color != b.Color || a.Color != c.Color || a.Color == 'z')
