@@ -1,10 +1,13 @@
 #ifndef common_hpp
 #define common_hpp
 
+#include <vector>
 #include <string>
+#include <iostream>
+#include <algorithm>
 #define sc static_cast
 
-enum Wind {
+enum struct Wind {
     East, South, West, North,
 };
 
@@ -33,17 +36,17 @@ struct Tile {
         else
             *this = Tile(rhs[1], sc <int> (rhs[0] - '0'), 0);
     }
-    inline bool isEqual (const Tile &rhs) {
-        return Color == rhs.Color && Value == rhs.Value;
-    }
     inline bool operator == (const Tile &rhs) const {
-        return Id == rhs.Id;
+        return Color == rhs.Color && Value == rhs.Value;
     }
     inline bool operator < (const Tile &rhs) const {
         return Id < rhs.Id;
     }
     inline bool operator > (const Tile &rhs) const {
         return Id > rhs.Id;
+    }
+    inline bool operator != (const Tile &rhs) const {
+        return !(*this == rhs);
     }
     inline std::string Print () {
         std::string Name;
@@ -70,6 +73,99 @@ struct Tile {
                 return Tile(Color, Value + 1);
     }
 };
+
+enum struct GroupType {
+    Pair, Sequence, Triplet, Kan, NullType, 
+};
+
+struct Group {
+    GroupType Type;
+    char Color;
+    int Value, AkaState, State;
+    Group () {}
+    Group (const GroupType &type, const char &color, const int &value, const int &akastate, const int &state)
+     : Type(type), Color(color), Value(value), AkaState(akastate), State(state) {}
+    inline bool operator < (const Group &rhs) const {
+        return Type < rhs.Type || Color < rhs.Color || Value < rhs.Value;
+    }
+    inline bool operator == (const Group &rhs) const {
+        return Type == rhs.Type && Color == rhs.Color && Value == rhs.Value && AkaState == rhs.AkaState && State == rhs.State;
+    }
+    inline bool operator != (const Group &rhs) const {
+        return !(*this == rhs);
+    }
+    std::string Print () {
+        if (Type == GroupType::NullType)
+            return "NULL Group";
+        std::string Name;
+        if (Type == GroupType::Pair) {
+            Name.push_back(Value + '0');
+            Name.push_back((AkaState & 1) ? '0' : Value + '0');
+        } else if (Type == GroupType::Sequence) {
+            if (State & 7) {
+                if (State & 16) {
+                    Name.push_back('(');
+                    Name.push_back((AkaState & 4) ? '0' : Value + '0');
+                    Name.push_back(')');
+                    Name.push_back((AkaState & 2) ? '0' : Value + '1');
+                    Name.push_back((AkaState & 1) ? '0' : Value + '2');
+                } else if (State & 8) {
+                    Name.push_back('(');
+                    Name.push_back((AkaState & 2) ? '0' : Value + '1');
+                    Name.push_back(')');
+                    Name.push_back((AkaState & 4) ? '0' : Value + '0');
+                    Name.push_back((AkaState & 1) ? '0' : Value + '2');
+                } else {
+                    Name.push_back('(');
+                    Name.push_back((AkaState & 1) ? '0' : Value + '2');
+                    Name.push_back(')');
+                    Name.push_back((AkaState & 4) ? '0' : Value + '0');
+                    Name.push_back((AkaState & 2) ? '0' : Value + '1');
+                }
+            } else {
+                Name.push_back((AkaState & 4) ? '0' : Value + '0');
+                Name.push_back((AkaState & 2) ? '0' : Value + '1');
+                Name.push_back((AkaState & 1) ? '0' : Value + '2');
+            }
+        }
+        Name.push_back(Color);
+        return Name;
+    }
+};
+const Group NullGroup = Group(GroupType::NullType, 0, 0, 0, 0);
+Group InitPair (Tile a, Tile b) {
+    if (a != b)
+        return NullGroup;
+    if (a > b)
+        std::swap(a, b);
+    return Group(GroupType::Pair, a.Color, a.Value, b.isAka, 0);
+}
+Group InitTriplet (Tile a, Tile b, Tile c, int state) {
+    if (a != b || a != c)
+        return NullGroup;
+    if (a > b)
+        std::swap(a, b);
+    return Group(GroupType::Triplet, a.Color, a.Value, (b.isAka << 1) | c.isAka, state);
+}
+Group InitKan (Tile a, Tile b, Tile c, Tile d, int state) {
+    if (a != b || a != c || a != d)
+        return NullGroup;
+    return Group(GroupType::Triplet, a.Color, a.Value, (a.isAka << 3) | (b.isAka << 2) | (c.isAka << 1) | d.isAka, state);
+}
+Group InitSequence (Tile a, Tile b, Tile c, int state = 0) {
+    if (a.Color != b.Color || a.Color != c.Color || a.Color == 'z')
+        return NullGroup;
+    if (a > b)
+        std::swap(a, b);
+    if (a.Value == b.Value - 1 && b.Value == c.Value - 1)
+        return Group(GroupType::Sequence, a.Color, a.Value, (a.isAka << 2) | (b.isAka << 1) | c.isAka, state);
+    else if (a.Value == c.Value - 1 && c.Value == b.Value - 1)
+        return Group(GroupType::Sequence, a.Color, a.Value, (a.isAka << 2) | (c.isAka << 1) | b.isAka, state + 8);
+    else if (c.Value == a.Value - 1 && a.Value == b.Value - 1)
+        return Group(GroupType::Sequence, a.Color, c.Value, (c.isAka << 2) | (a.isAka << 1) | b.isAka, state + 16);
+    else
+        return NullGroup;
+}
 
 #undef sc
 

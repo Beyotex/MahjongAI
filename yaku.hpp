@@ -94,6 +94,7 @@ int ProcessHan (const Yaku &Num, const bool& isOpen) {
             case 12: case 15:
                 return isOpen ? 0 : - ((Han - 8) / 3);
         }
+    return 0;
 }
 
 #undef sc

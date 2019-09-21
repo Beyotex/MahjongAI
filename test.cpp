@@ -18,7 +18,6 @@ void TestTile () {
     std::cout << (Tile("0s") == Tile("5s")) << ' '
      << (Tile("7z") > Tile("9s")) << ' '
      << (Tile("0s") < Tile("5s")) << ' '
-     << Tile("0p").isEqual(Tile("5p")) << ' '
      << Tile("6z").Id << ' '
      << Tile("0m").Id << ' '
      << Tile("1p").Id << ' '
@@ -29,9 +28,22 @@ void TestTile () {
      << Tile("4z").Next().Print() << std::endl;
 }
 
+void TestGroup () {
+    std::cout << InitPair(Tile("0s"), Tile("5s")).Print() << ' '
+     << (InitPair(Tile("5s"), Tile("0s")) == InitPair(Tile("0s"), Tile("5s"))) << ' '
+     << InitPair(Tile("6z"), Tile("6s")).Print() << ' '
+     << InitPair(Tile("6z"), Tile("7z")).Print() << std::endl
+     << InitSequence(Tile("3z"), Tile("1z"), Tile("2z")).Print() << ' '
+     << InitSequence(Tile("4p"), Tile("6p"), Tile("0p")).Print() << ' '
+     << InitSequence(Tile("4p"), Tile("6p"), Tile("0p"), 1).Print() << ' '
+     << InitSequence(Tile("0p"), Tile("6p"), Tile("4p")).Print() << ' '
+     << InitSequence(Tile("4p"), Tile("0p"), Tile("6p"), 1).Print() << ' '<< std::endl;
+}
+
 int main () {
-    TestYaku();
-    TestTile();
+    // TestYaku();
+    // TestTile();
+    TestGroup();
 }
 
 #undef sc
