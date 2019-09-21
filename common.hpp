@@ -289,7 +289,7 @@ state = 0 暗杠
 state = 1,2,3 明杠下家，对家，上家
 state = 13,14,15 加杠，第一张牌来自下家，对家，上家
 state = 21,22,23 加杠，第二张牌来自下家，对家，上家
-state = 29,30,31 加杠，第一张牌来自下家，对家，上家
+state = 29,30,31 加杠，第三张牌来自下家，对家，上家
 */
 Group InitKan (Tile a, Tile b, Tile c, Tile d, int state = 0) {
     if (a != b || a != c || a != d)
