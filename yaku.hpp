@@ -2,6 +2,7 @@
 #define yaku_hpp
 
 #define sc static_cast
+
 /*
 0:一番
 1:一番，门前清限定
@@ -17,7 +18,7 @@ c:役满，门前清限定
 e:两倍役满
 f:两倍役满，门前清限定
 */
-enum class Yaku {
+enum struct Yaku {
     Reach = 0x10,
     SevenPairs = 0x40,
     NagashiMangan = 0x90,
@@ -71,6 +72,7 @@ enum class Yaku {
     Tenhou = 0xc3,
     Chiihou = 0xc4,
 };
+
 int ProceedsHan (const Yaku &Num, const bool& isOpen) {
     int Han = (sc <int> (Num) & 0xf0) >> 4;
     if (Han < 9)
@@ -94,6 +96,7 @@ int ProceedsHan (const Yaku &Num, const bool& isOpen) {
                 return isOpen ? 0 : - ((Han - 8) / 3);
         }
 }
+
 #undef sc
 
 #endif // yaku_hpp
