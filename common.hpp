@@ -13,7 +13,7 @@ struct Tile {
     int Value, Id;
     bool isAka;
     inline Tile () {}
-    inline Tile (const char &color, const int &value, const bool &isaka)
+    inline Tile (const char &color, const int &value, const bool &isaka = 0)
      : Color(color), Value(value), isAka(isaka) {
         switch(sc <int> (Color)) {
             case 109: Id = 0; break;
@@ -33,14 +33,41 @@ struct Tile {
         else
             *this = Tile(rhs[1], sc <int> (rhs[0] - '0'), 0);
     }
-    inline bool operator == (const Tile &rhs) const {
+    inline bool isEqual (const Tile &rhs) {
         return Color == rhs.Color && Value == rhs.Value;
+    }
+    inline bool operator == (const Tile &rhs) const {
+        return Id == rhs.Id;
     }
     inline bool operator < (const Tile &rhs) const {
         return Id < rhs.Id;
     }
     inline bool operator > (const Tile &rhs) const {
         return Id > rhs.Id;
+    }
+    inline std::string Print () {
+        std::string Name;
+        Name.push_back(isAka ? '0' : Value + '0');
+        Name.push_back(Color);
+        return Name;
+    }
+    inline bool isYaochuu () {
+        return Color == 'z' || Value == 1 || Value == 9;
+    }
+    inline Tile Next () {
+        if (Color == 'z') {
+            if (Value == 4)
+                return Tile('z', 1);
+            else if (Value == 7)
+                return Tile('z', 5);
+            else
+                return Tile('z', Value + 1);
+        }
+        else
+            if (Value == 9)
+                return Tile(Color, 1);
+            else
+                return Tile(Color, Value + 1);
     }
 };
 
