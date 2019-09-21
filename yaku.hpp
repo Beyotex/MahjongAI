@@ -1,3 +1,7 @@
+#ifndef yaku_hpp
+#define yaku_hpp
+
+#define sc static_cast
 /*
 0:一番
 1:一番，门前清限定
@@ -68,7 +72,7 @@ enum class Yaku {
     Chiihou = 0xc4,
 };
 int ProceedsHan (const Yaku &Num, const bool& isOpen) {
-    int Han = static_cast <int> (Num) & 0xf0;
+    int Han = (sc <int> (Num) & 0xf0) >> 4;
     if (Han < 9)
         switch (Han % 3) {
             case 0:
@@ -90,3 +94,6 @@ int ProceedsHan (const Yaku &Num, const bool& isOpen) {
                 return isOpen ? 0 : - ((Han - 8) / 3);
         }
 }
+#undef sc
+
+#endif // yaku_hpp
