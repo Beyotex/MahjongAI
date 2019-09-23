@@ -13,18 +13,19 @@ enum struct Wind {
 
 struct Tile {
     char Color;
-    int Value, Id;
+    int Value, Id, GeneralId;
     bool isAka;
     inline Tile () {}
     inline Tile (const char &color, const int &value, const bool &isaka = 0)
      : Color(color), Value(value), isAka(isaka) {
+        Id = GeneralId = 0;
         switch(sc <int> (Color)) {
-            case 109: Id = 0; break;
-            case 112: Id = 10; break;
-            case 115: Id = 20; break;
-            case 122: Id = 30; break;
+            case 122: Id += 10, GeneralId += 9;
+            case 115: Id += 10, GeneralId += 9;
+            case 112: Id += 10, GeneralId += 9;
         }
         Id += Value - 1;
+        GeneralId += Value - 1;
         if (isAka)
             Id++;
         if (Value > 5 && Color != 'z')
@@ -82,8 +83,8 @@ struct Group {
     GroupType Type;
     char Color;
     int Value, AkaState, State;
-    Group () {}
-    Group (const GroupType &type, const char &color, const int &value, const int &akastate, const int &state)
+    inline Group () {}
+    inline Group (const GroupType &type, const char &color, const int &value, const int &akastate, const int &state)
      : Type(type), Color(color), Value(value), AkaState(akastate), State(state) {}
     inline bool operator < (const Group &rhs) const {
         return Type < rhs.Type || Color < rhs.Color || Value < rhs.Value;
@@ -176,10 +177,10 @@ struct Group {
                         break;
                     case 2:
                         Name.push_back(Value + '0');
-                        Name.push_back(Value + '0');
                         Name.push_back('(');
                         Name.push_back((AkaState & 1) ? '0' : Value + '0');
                         Name.push_back(')');
+                        Name.push_back(Value + '0');
                         Name.push_back((AkaState & 2) ? '0' : Value + '0');
                         break;
                     case 3:

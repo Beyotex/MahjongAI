@@ -19,8 +19,11 @@ void TestTile () {
      << (Tile("7z") > Tile("9s")) << ' '
      << (Tile("0s") < Tile("5s")) << ' '
      << Tile("6z").Id << ' '
+     << Tile("6z").GeneralId << ' '
      << Tile("0m").Id << ' '
+     << Tile("0m").GeneralId << ' '
      << Tile("1p").Id << ' '
+     << Tile("1p").GeneralId << ' '
      << Tile('z', 5, 0).Print() << ' '
      << Tile('m', 5, 1).Print() << ' '
      << Tile("0s").Next().Print() << ' '
@@ -56,7 +59,7 @@ void TestGroup () {
 
 int main () {
     // TestYaku();
-    // TestTile();
+    TestTile();
     TestGroup();
 }
 
