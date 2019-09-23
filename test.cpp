@@ -1,8 +1,10 @@
 #include <iostream>
-#include "yaku.hpp"
+// #include "yaku.hpp"
 #include "common.hpp"
+#include "agari.hpp"
 #define sc static_cast
 
+/*
 void TestYaku () {
     std::cout << ProcessHan(Yaku::Rinshan, 1) << ' '
      << ProcessHan(Yaku::Pinfu, 1) << ' '
@@ -13,6 +15,7 @@ void TestYaku () {
      << ProcessHan(Yaku::BigThreeDrangons, 1) << ' '
      << ProcessHan(Yaku::NineGates9Wait, 0) << std::endl;
 }
+*/
 
 void TestTile () {
     std::cout << (Tile("0s") == Tile("5s")) << ' '
@@ -57,10 +60,47 @@ void TestGroup () {
      << InitKan(Tile("5p"), Tile("5p"), Tile("5p"), Tile("0p"), 8 + 7).Print() << std::endl;
 }
 
+void PrintAgari (TryAgari result) {
+    if (result.isSuccessful) {
+        for (auto yak : result.Result.yaku)
+            std::cout << sc <int> (yak) << ' ';
+        std::cout << std::endl;
+        if (result.Result.isTsumo) {
+            if (result.Result.isEast)
+                std::cout << '+' << result.Result.AgariScore << " Tsumo " << result.Result.OthersScore << std::endl;
+            else
+                std::cout << '+' << result.Result.AgariScore << " Tsumo " << result.Result.OthersScore << '-' <<
+                    result.Result.EastScore << std::endl;
+        } else
+                std::cout << '+' << result.Result.AgariScore << " Ron " << result.Result.RonScore << std::endl;
+    } else std::cout << "Failed " << sc <int> (result.Failed) << "\n";
+}
+
+void TestAgari () {
+    std::vector <Tile> HandTile = {
+        Tile('m', 1), Tile('m', 9), Tile('p', 1), Tile('p', 9), Tile('s', 1), Tile('s', 9),
+        Tile('z', 1), Tile('z', 2), Tile('z', 3), Tile('z', 4), Tile('z', 5), Tile('z', 6), Tile('z', 6)
+    };
+    AgariPara para(Wind::East, Wind::East, 0, Tile("1s"), HandTile, NullGroups, NullTiles, NullTiles, 0, 2, 3, 0, 1);
+    PrintAgari(Agari(para));
+    para.Target = Tile("7z");
+    PrintAgari(Agari(para));
+    para.isTenhou = 0;
+    PrintAgari(Agari(para));
+    para.HandTile[12] = Tile('z', 7);
+    para.AgariType = 1;
+    PrintAgari(Agari(para));
+    para.SelfWind = Wind::West;
+    PrintAgari(Agari(para));
+    para.AgariType = 0;
+    PrintAgari(Agari(para));
+}
+
 int main () {
     // TestYaku();
-    TestTile();
-    TestGroup();
+    // TestTile();
+    // TestGroup();
+    TestAgari();
 }
 
 #undef sc

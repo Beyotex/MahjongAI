@@ -6,9 +6,64 @@
 #include <iostream>
 #include <algorithm>
 #define sc static_cast
+#define pb push_back
 
 enum struct Wind {
     East, South, West, North,
+};
+
+enum struct Yaku {
+    Riichi,
+    AllSimples,
+    FullyConcealedHand,
+    HonorTile_SeatWind,
+    HonorTile_PrevalentWind,
+    HonorTile_White,
+    HonorTile_Green,
+    HonorTile_Red,
+    Pinfu,
+    Iipeikou,
+    Chankan,
+    Rinshan,
+    Haitei,
+    Houtei,
+    Ippatsu,
+
+    DoubleRiichi,
+    TripleTriplets,
+    ThreeKans,
+    AllTriplets,
+    ThreeConcealedTriplets,
+    LittleThreeDragons,
+    AllTerminalsAndHonors,
+    SevenPairs,
+    Chanta,
+    Straight,
+    Sanshoku,
+
+    Ryanpeiko,
+    Junchan,
+    HalfFlush,
+    
+    NagashiMangan,
+    FullFlush,
+
+    Tenhou,
+    Chiihou,
+    BigThreeDrangons,
+    FourConcealedTriplets,
+    AllHonors,
+    AllGreen,
+    AllTerminals,
+    ThirteenOrphans,
+    SmallFourWinds,
+    FourKans,
+    NineGates,
+
+    FourConcealedTripletsSingleWait,
+    ThirteenOrphans13Wait,
+    NineGates9Wait,
+    BigFourWinds,
 };
 
 struct Tile {
@@ -51,8 +106,8 @@ struct Tile {
     }
     inline std::string Print () {
         std::string Name;
-        Name.push_back(isAka ? '0' : Value + '0');
-        Name.push_back(Color);
+        Name.pb(isAka ? '0' : Value + '0');
+        Name.pb(Color);
         return Name;
     }
     inline bool isYaochuu () {
@@ -75,6 +130,8 @@ struct Tile {
     }
 };
 
+const std::vector <Tile> NullTiles;
+
 enum struct GroupType {
     Pair, Sequence, Triplet, Kan, NullType, 
 };
@@ -95,172 +152,198 @@ struct Group {
     inline bool operator != (const Group &rhs) const {
         return !(*this == rhs);
     }
+    std::vector <Tile> getTiles () {
+        if (Type == GroupType::NullType)
+            return NullTiles;
+        std::vector <Tile> Tiles;
+        if (Type == GroupType::Pair) {
+            Tiles.pb(Tile(Color, Value));
+            Tiles.pb(Tile(Color, Value, AkaState & 1));
+        } else if (Type == GroupType::Sequence) {
+            Tiles.pb(Tile(Color, Value, AkaState & 4));
+            Tiles.pb(Tile(Color, Value + 1, AkaState & 2));
+            Tiles.pb(Tile(Color, Value + 2, AkaState & 1));
+        } else if (Type == GroupType::Triplet) {
+            Tiles.pb(Tile(Color, Value));
+            Tiles.pb(Tile(Color, Value, AkaState & 2));
+            Tiles.pb(Tile(Color, Value, AkaState & 1));
+        } else {
+            Tiles.pb(Tile(Color, Value));
+            Tiles.pb(Tile(Color, Value));
+            Tiles.pb(Tile(Color, Value, AkaState & 2));
+            Tiles.pb(Tile(Color, Value, AkaState & 1));
+        }
+        return Tiles;
+    }
     std::string Print () {
         if (Type == GroupType::NullType)
             return "Invalid Group";
         std::string Name;
         bool Changed = 0;
         if (Type == GroupType::Pair) {
-            Name.push_back(Value + '0');
-            Name.push_back((AkaState & 1) ? '0' : Value + '0');
+            Name.pb(Value + '0');
+            Name.pb((AkaState & 1) ? '0' : Value + '0');
         } else if (Type == GroupType::Sequence) {
             if (State & 7) {
                 if (State & 16) {
-                    Name.push_back('(');
-                    Name.push_back((AkaState & 4) ? '0' : Value + '0');
-                    Name.push_back(')');
-                    Name.push_back((AkaState & 2) ? '0' : Value + '1');
-                    Name.push_back((AkaState & 1) ? '0' : Value + '2');
+                    Name.pb('(');
+                    Name.pb((AkaState & 4) ? '0' : Value + '0');
+                    Name.pb(')');
+                    Name.pb((AkaState & 2) ? '0' : Value + '1');
+                    Name.pb((AkaState & 1) ? '0' : Value + '2');
                 } else if (State & 8) {
-                    Name.push_back('(');
-                    Name.push_back((AkaState & 2) ? '0' : Value + '1');
-                    Name.push_back(')');
-                    Name.push_back((AkaState & 4) ? '0' : Value + '0');
-                    Name.push_back((AkaState & 1) ? '0' : Value + '2');
+                    Name.pb('(');
+                    Name.pb((AkaState & 2) ? '0' : Value + '1');
+                    Name.pb(')');
+                    Name.pb((AkaState & 4) ? '0' : Value + '0');
+                    Name.pb((AkaState & 1) ? '0' : Value + '2');
                 } else {
-                    Name.push_back('(');
-                    Name.push_back((AkaState & 1) ? '0' : Value + '2');
-                    Name.push_back(')');
-                    Name.push_back((AkaState & 4) ? '0' : Value + '0');
-                    Name.push_back((AkaState & 2) ? '0' : Value + '1');
+                    Name.pb('(');
+                    Name.pb((AkaState & 1) ? '0' : Value + '2');
+                    Name.pb(')');
+                    Name.pb((AkaState & 4) ? '0' : Value + '0');
+                    Name.pb((AkaState & 2) ? '0' : Value + '1');
                 }
             } else {
-                Name.push_back((AkaState & 4) ? '0' : Value + '0');
-                Name.push_back((AkaState & 2) ? '0' : Value + '1');
-                Name.push_back((AkaState & 1) ? '0' : Value + '2');
+                Name.pb((AkaState & 4) ? '0' : Value + '0');
+                Name.pb((AkaState & 2) ? '0' : Value + '1');
+                Name.pb((AkaState & 1) ? '0' : Value + '2');
             }
         } else if (Type == GroupType::Triplet) {
             switch (State) {
                 case 3:
-                    Name.push_back('(');
-                    Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                    Name.push_back(')');
-                    Name.push_back(Value + '0');
-                    Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                    Name.pb('(');
+                    Name.pb((AkaState & 1) ? '0' : Value + '0');
+                    Name.pb(')');
+                    Name.pb(Value + '0');
+                    Name.pb((AkaState & 2) ? '0' : Value + '0');
                     break;
                 case 2:
-                    Name.push_back(Value + '0');
-                    Name.push_back('(');
-                    Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                    Name.push_back(')');
-                    Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                    Name.pb(Value + '0');
+                    Name.pb('(');
+                    Name.pb((AkaState & 1) ? '0' : Value + '0');
+                    Name.pb(')');
+                    Name.pb((AkaState & 2) ? '0' : Value + '0');
                     break;
                 case 1:
-                    Name.push_back(Value + '0');
-                    Name.push_back((AkaState & 2) ? '0' : Value + '0');
-                    Name.push_back('(');
-                    Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                    Name.push_back(')');
+                    Name.pb(Value + '0');
+                    Name.pb((AkaState & 2) ? '0' : Value + '0');
+                    Name.pb('(');
+                    Name.pb((AkaState & 1) ? '0' : Value + '0');
+                    Name.pb(')');
                     break;
                 default:
-                    Name.push_back(Value + '0');
-                    Name.push_back(Value + '0');
-                    Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                    Name.pb(Value + '0');
+                    Name.pb(Value + '0');
+                    Name.pb((AkaState & 1) ? '0' : Value + '0');
             }
         } else {
             if (!State) {
                 Changed = 1;
                 Color -= 32;
-                Name.push_back(Value + '0');
-                Name.push_back(Value + '0');
-                Name.push_back(Value + '0');
-                Name.push_back((AkaState & 1) ? '0' : Value + '0');
+                Name.pb(Value + '0');
+                Name.pb(Value + '0');
+                Name.pb(Value + '0');
+                Name.pb((AkaState & 1) ? '0' : Value + '0');
             } else {
                 switch (State & 7) {
                     case 1:
-                        Name.push_back(Value + '0');
-                        Name.push_back(Value + '0');
-                        Name.push_back((AkaState & 2) ? '0' : Value + '0');
-                        Name.push_back('(');
-                        Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                        Name.push_back(')');
+                        Name.pb(Value + '0');
+                        Name.pb(Value + '0');
+                        Name.pb((AkaState & 2) ? '0' : Value + '0');
+                        Name.pb('(');
+                        Name.pb((AkaState & 1) ? '0' : Value + '0');
+                        Name.pb(')');
                         break;
                     case 2:
-                        Name.push_back(Value + '0');
-                        Name.push_back('(');
-                        Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                        Name.push_back(')');
-                        Name.push_back(Value + '0');
-                        Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                        Name.pb(Value + '0');
+                        Name.pb('(');
+                        Name.pb((AkaState & 1) ? '0' : Value + '0');
+                        Name.pb(')');
+                        Name.pb(Value + '0');
+                        Name.pb((AkaState & 2) ? '0' : Value + '0');
                         break;
                     case 3:
-                        Name.push_back('(');
-                        Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                        Name.push_back(')');
-                        Name.push_back(Value + '0');
-                        Name.push_back(Value + '0');
-                        Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                        Name.pb('(');
+                        Name.pb((AkaState & 1) ? '0' : Value + '0');
+                        Name.pb(')');
+                        Name.pb(Value + '0');
+                        Name.pb(Value + '0');
+                        Name.pb((AkaState & 2) ? '0' : Value + '0');
                         break;
                     case 5:
                         switch(State >> 3) {
                             case 3: case 2:
-                                Name.push_back(Value + '0');
-                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
-                                Name.push_back('(');
-                                Name.push_back(Value + '0');
-                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                                Name.push_back(')');
+                                Name.pb(Value + '0');
+                                Name.pb((AkaState & 2) ? '0' : Value + '0');
+                                Name.pb('(');
+                                Name.pb(Value + '0');
+                                Name.pb((AkaState & 1) ? '0' : Value + '0');
+                                Name.pb(')');
                                 break;
                             case 1:
-                                Name.push_back(Value + '0');
-                                Name.push_back(Value + '0');
-                                Name.push_back('(');
-                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
-                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                                Name.push_back(')');
+                                Name.pb(Value + '0');
+                                Name.pb(Value + '0');
+                                Name.pb('(');
+                                Name.pb((AkaState & 2) ? '0' : Value + '0');
+                                Name.pb((AkaState & 1) ? '0' : Value + '0');
+                                Name.pb(')');
                                 break;
                         }
                         break;
                     case 6:
                         switch(State >> 3) {
                             case 3: case 2:
-                                Name.push_back(Value + '0');
-                                Name.push_back('(');
-                                Name.push_back(Value + '0');
-                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                                Name.push_back(')');
-                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                                Name.pb(Value + '0');
+                                Name.pb('(');
+                                Name.pb(Value + '0');
+                                Name.pb((AkaState & 1) ? '0' : Value + '0');
+                                Name.pb(')');
+                                Name.pb((AkaState & 2) ? '0' : Value + '0');
                                 break;
                             case 1:
-                                Name.push_back(Value + '0');
-                                Name.push_back('(');
-                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
-                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                                Name.push_back(')');
-                                Name.push_back(Value + '0');
+                                Name.pb(Value + '0');
+                                Name.pb('(');
+                                Name.pb((AkaState & 2) ? '0' : Value + '0');
+                                Name.pb((AkaState & 1) ? '0' : Value + '0');
+                                Name.pb(')');
+                                Name.pb(Value + '0');
                                 break;
                         }
                         break;
                     case 7:
                         switch(State >> 3) {
                             case 3: case 2:
-                                Name.push_back('(');
-                                Name.push_back(Value + '0');
-                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                                Name.push_back(')');
-                                Name.push_back(Value + '0');
-                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
+                                Name.pb('(');
+                                Name.pb(Value + '0');
+                                Name.pb((AkaState & 1) ? '0' : Value + '0');
+                                Name.pb(')');
+                                Name.pb(Value + '0');
+                                Name.pb((AkaState & 2) ? '0' : Value + '0');
                                 break;
                             case 1:
-                                Name.push_back('(');
-                                Name.push_back((AkaState & 2) ? '0' : Value + '0');
-                                Name.push_back((AkaState & 1) ? '0' : Value + '0');
-                                Name.push_back(')');
-                                Name.push_back(Value + '0');
-                                Name.push_back(Value + '0');
+                                Name.pb('(');
+                                Name.pb((AkaState & 2) ? '0' : Value + '0');
+                                Name.pb((AkaState & 1) ? '0' : Value + '0');
+                                Name.pb(')');
+                                Name.pb(Value + '0');
+                                Name.pb(Value + '0');
                                 break;
                         }
                         break;
                 }
             }
         }
-        Name.push_back(Color);
+        Name.pb(Color);
         if (Changed)
             Color += 32;
         return Name;
     }
 };
+
 const Group NullGroup = Group(GroupType::NullType, 0, 0, 0, 0);
+const std::vector <Group> NullGroups;
+
 Group InitPair (Tile a, Tile b) {
     if (a != b)
         return NullGroup;
