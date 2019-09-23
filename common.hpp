@@ -30,11 +30,11 @@ struct Tile {
         if (Value > 5 && Color != 'z')
             Id++;
     }
-    inline Tile (const std::string &rhs) {
-        if (rhs[0] == '0')
-            *this = Tile(rhs[1], 5, 1);
+    inline Tile (const std::string &Name) {
+        if (Name[0] == '0')
+            *this = Tile(Name[1], 5, 1);
         else
-            *this = Tile(rhs[1], sc <int> (rhs[0] - '0'), 0);
+            *this = Tile(Name[1], sc <int> (Name[0] - '0'), 0);
     }
     inline bool operator == (const Tile &rhs) const {
         return Color == rhs.Color && Value == rhs.Value;
@@ -96,7 +96,7 @@ struct Group {
     }
     std::string Print () {
         if (Type == GroupType::NullType)
-            return "NULL Group";
+            return "Invalid Group";
         std::string Name;
         bool Changed = 0;
         if (Type == GroupType::Pair) {
