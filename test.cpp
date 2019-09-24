@@ -46,48 +46,104 @@ void TestGroup () {
      << InitKan(Tile("5p"), Tile("5p"), Tile("5p"), Tile("0p"), 8 + 7).Print() << std::endl;
 }
 
-void TestAgari () {
+void TestAgari (const int &Id) {
     std::vector <Tile> HandTile = {
         Tile('m', 1), Tile('m', 9), Tile('p', 1), Tile('p', 9), Tile('s', 1), Tile('s', 9),
         Tile('z', 1), Tile('z', 2), Tile('z', 3), Tile('z', 4), Tile('z', 5), Tile('z', 6), Tile('z', 6)
     };
     AgariPara para(Wind::East, Wind::East, 0, Tile("1s"), HandTile, NullGroups, NullTiles, NullTiles, 0, 2, 3, 0, 1);
-    Agari(para).Print();
-    para.Target = Tile("7z");
-    Agari(para).Print();
-    para.isTenhou = 0;
-    Agari(para).Print();
-    para.HandTile[12] = Tile('z', 7);
-    para.AgariType = 1;
-    Agari(para).Print();
-    para.SelfWind = Wind::West;
-    Agari(para).Print();
-    para.AgariType = 0;
-    Agari(para).Print();
     AgariResult result;
-    result.Han = 6;
-    result.Fu = 20;
-    result.yaku.pb(Yaku::Riichi);
-    result.yaku.pb(Yaku::Pinfu);
-    result.yaku.pb(Yaku::SanshokuClosed);
-    result.yaku.pb(Yaku::Iipeikou);
-    result.yaku.pb(Yaku::FullyConcealedHand);
-    para.AgariType = 0;
-    para.SelfWind = Wind::East;
-    result.GetScore(para);
-    TryAgari(result).Print();
-    result.yaku.clear();
-    result.yaku.pb(Yaku::NagashiMangan);
-    result.Han = 5;
-    result.GetScore(para);
-    TryAgari(result).Print();
+    switch (Id) {
+        case 0:
+            Agari(para).Print();
+            para.Target = Tile("7z");
+            Agari(para).Print();
+            para.isTenhou = 0;
+            Agari(para).Print();
+            para.HandTile[12] = Tile('z', 7);
+            para.AgariType = 1;
+            Agari(para).Print();
+            para.SelfWind = Wind::West;
+            Agari(para).Print();
+            para.AgariType = 0;
+            Agari(para).Print();
+            break;
+        case 1:
+            result.Han = 6;
+            result.Fu = 20;
+            result.yaku.pb(Yaku::Riichi);
+            result.yaku.pb(Yaku::Pinfu);
+            result.yaku.pb(Yaku::SanshokuClosed);
+            result.yaku.pb(Yaku::Iipeikou);
+            result.yaku.pb(Yaku::FullyConcealedHand);
+            para.AgariType = 0;
+            para.SelfWind = Wind::East;
+            result.GetScore(para);
+            TryAgari(result).Print();
+            result.yaku.clear();
+            result.yaku.pb(Yaku::NagashiMangan);
+            result.Han = 5;
+            result.GetScore(para);
+            TryAgari(result).Print();
+            break;
+        case 2:
+            HandTile.clear();
+            for (int i = 1; i <= 7; i++) {
+                HandTile.pb(Tile('z', i));
+                if (i != 7)
+                    HandTile.pb(Tile('z', i));
+            }
+            para.Target = Tile("7z");
+            para.HandTile = HandTile;
+            para.isTenhou = 1;
+            Agari(para).Print();
+            HandTile.clear();
+            for (int i = 1; i <= 7; i++) {
+                HandTile.pb(Tile('p', i));
+                if (i != 5)
+                    HandTile.pb(Tile('p', i));
+            }
+            para.Target = Tile("0s");
+            para.HandTile = HandTile;
+            para.isTenhou = 0;
+            Agari(para).Print();
+            para.Target = Tile("1p");
+            Agari(para).Print();
+            para.Target = Tile("0p");
+            para.ReachTurn = 1;
+            para.isOneShot = 1;
+            Agari(para).Print();
+            para.Dora = {Tile("3p"), Tile("5p")};
+            Agari(para).Print();
+            para.ReachTurn = 2;
+            para.isOneShot = 0;
+            para.AgariType = 1;
+            para.HandTile[0] = Tile("1z");
+            para.HandTile[1] = Tile("1z");
+            para.HandTile[2] = Tile("5z");
+            para.HandTile[3] = Tile("5z");
+            para.UraDora = {Tile("7z"), Tile("4z")};
+            Agari(para).Print();
+            para.HandTile[0] = Tile("0s");
+            para.HandTile[1] = Tile("5s");
+            para.HandTile[2] = Tile("0m");
+            para.HandTile[3] = Tile("5m");
+            para.SelfWind = Wind::West;
+            para.AgariType = 1;
+            para.Dora.clear();
+            para.UraDora.clear();
+            para.Dora = {Tile("3p")};
+            para.UraDora = {Tile("4m")};
+            Agari(para).Print();
+            break;
+    }
 }
 
 int main () {
     // TestYaku();
     // TestTile();
     // TestGroup();
-    TestAgari();
+    TestAgari(2);
 }
 
 #undef sc

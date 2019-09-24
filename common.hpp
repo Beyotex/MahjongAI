@@ -14,8 +14,11 @@ enum struct Wind {
 
 enum struct Yaku {
     Riichi,
-    AllSimples,
+    DoubleRiichi,
     FullyConcealedHand,
+    Ippatsu,
+
+    AllSimples,
     HonorTile_SeatWind,
     HonorTile_PrevalentWind,
     HonorTile_White,
@@ -27,9 +30,7 @@ enum struct Yaku {
     Rinshan,
     Haitei,
     Houtei,
-    Ippatsu,
 
-    DoubleRiichi,
     TripleTriplets,
     ThreeKans,
     AllTriplets,
@@ -74,8 +75,10 @@ enum struct Yaku {
 
 const std::string YakuName [] = {
     "立直 1番", 
-    "断幺九 1番", 
+    "两立直 2番", 
+    "一发 1番",
     "门前清自摸和 1番",
+    "断幺九 1番", 
     "役牌：门风牌 1番", 
     "役牌：场风牌 1番", 
     "役牌 白 1番", 
@@ -87,9 +90,7 @@ const std::string YakuName [] = {
     "岭上开花 1番", 
     "海底摸月 1番", 
     "河底摸鱼 1番", 
-    "一发 1番",
     
-    "两立直 2番", 
     "三色同刻 2番", 
     "三杠子 2番", 
     "对对和 2番", 
@@ -130,6 +131,11 @@ const std::string YakuName [] = {
     "国士无双十三面",
     "纯正九莲宝灯",
     "大四喜"
+};
+
+const bool isYaochuu [] = {
+    1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1
 };
 
 struct Tile {
