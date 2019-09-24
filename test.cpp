@@ -76,6 +76,11 @@ void TestAgari () {
     para.SelfWind = Wind::East;
     result.GetScore(para);
     TryAgari(result).Print();
+    result.yaku.clear();
+    result.yaku.pb(Yaku::NagashiMangan);
+    result.Han = 5;
+    result.GetScore(para);
+    TryAgari(result).Print();
 }
 
 int main () {

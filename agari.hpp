@@ -123,7 +123,8 @@ struct TryAgari {
                 std::cout << ManganName[ManganLevel >> 1] << ' ';
             else if (ManganLevel == 2)
                 std::cout << ManganName[0] << ' ';
-            std::cout << Result.Han << "番" << Result.Fu << "符" << ' ';
+            if (Result.yaku[0] != Yaku::NagashiMangan)
+                std::cout << Result.Han << "番" << Result.Fu << "符" << ' ';
         }
         if (Result.isTsumo) {
             if (Result.isEast)
