@@ -38,15 +38,21 @@ enum struct Yaku {
     AllTerminalsAndHonors,
     SevenPairs,
     Chanta,
+    ChantaClosed,
     Straight,
+    StraightClosed,
     Sanshoku,
+    SanshokuClosed,
 
     Ryanpeiko,
     Junchan,
+    JunchanClosed,
     HalfFlush,
+    HalfFlushClosed,
     
     NagashiMangan,
     FullFlush,
+    FullFlushClosed,
 
     Tenhou,
     Chiihou,
@@ -64,6 +70,66 @@ enum struct Yaku {
     ThirteenOrphans13Wait,
     NineGates9Wait,
     BigFourWinds,
+};
+
+const std::string YakuName [] = {
+    "立直 1番", 
+    "断幺九 1番", 
+    "门前清自摸和 1番",
+    "役牌：门风牌 1番", 
+    "役牌：场风牌 1番", 
+    "役牌 白 1番", 
+    "役牌 发 1番", 
+    "役牌 中 1番",
+    "平和 1番", 
+    "一杯口 1番", 
+    "枪杠 1番", 
+    "岭上开花 1番", 
+    "海底摸月 1番", 
+    "河底摸鱼 1番", 
+    "一发 1番",
+    
+    "两立直 2番", 
+    "三色同刻 2番", 
+    "三杠子 2番", 
+    "对对和 2番", 
+    "三暗刻 2番",
+    "小三元 2番", 
+    "混老头 2番", 
+    "七对子 2番",
+    "混全带幺九 1番",
+    "混全带幺九 2番",
+    "一气通贯 1番",
+    "一气通贯 2番",
+    "三色同顺 1番",
+    "三色同顺 2番",
+    
+    "两杯口 2番",
+    "纯全带幺九 2番",
+    "纯全带幺九 3番",
+    "混一色 2番",
+    "混一色 3番",
+    
+    "流局满贯",
+    "清一色 5番",
+    "清一色 6番",
+
+    "天和",
+    "地和",
+    "大三元",
+    "四暗刻",
+    "字一色",
+    "绿一色",
+    "清老头",
+    "国士无双",
+    "小四喜",
+    "四杠子",
+    "九莲宝灯",
+
+    "四暗刻单骑",
+    "国士无双十三面",
+    "纯正九莲宝灯",
+    "大四喜"
 };
 
 struct Tile {

@@ -3,10 +3,16 @@
 
 #include <vector>
 #include <cstring>
-// #include "yaku.hpp"
 #include "common.hpp"
+#define sc static_cast
 
-inline int Roundup (int a) { return (a + 99) / 100 * 100;}
+const std::string ManganName [] = {
+    "满贯", "跳满", "倍满", "三倍满", "累计役满", 
+    "役满", "两倍役满", "三倍役满", "四倍役满", "五倍役满", "六倍役满"
+};
+
+inline int Roundup10 (int a) { return (a + 9) / 10 * 10;}
+inline int Roundup100 (int a) { return (a + 99) / 100 * 100;}
 
 struct AgariPara {
     Wind SelfWind, PrevailingWind;
@@ -27,14 +33,14 @@ struct AgariPara {
 };
 
 struct AgariResult {
-    int AgariId, RonId;
+    int AgariId, RonId, Counters;
     bool isEast, isTsumo;
     int Han, Fu;
     int Dora, AkaDora, UraDora;
     int PlainScore, AgariScore, RonScore, EastScore, OthersScore;
     std::vector <Yaku> yaku;
     inline AgariResult () {
-        AgariId = RonId = isEast = isTsumo = Han = Fu = Dora = 
+        AgariId = RonId = Counters = isEast = isTsumo = Han = Fu = Dora = 
          AkaDora = UraDora = PlainScore = AgariScore = RonScore = EastScore = OthersScore = 0;
     }
     inline bool operator < (const AgariResult &rhs) const {
@@ -48,6 +54,7 @@ struct AgariResult {
             return;
         isTsumo = (para.AgariType == 0);
         isEast = (para.SelfWind == Wind::East);
+        Counters = para.Counters;
         int BasicPoint;
         if (Han < 0)
             BasicPoint = -8000 * Han;
@@ -68,42 +75,82 @@ struct AgariResult {
         }
         if (isEast) {
             if (isTsumo) {
-                OthersScore = Roundup(BasicPoint * 2) + para.Counters * 100;
-                AgariScore = OthersScore * 3 + para.ReachCnt * 1000;
+                OthersScore = Roundup100(BasicPoint * 2);
+                AgariScore = OthersScore * 3;
             } else {
-                RonScore = Roundup(BasicPoint * 6) + para.Counters * 300;
-                AgariScore = RonScore + para.ReachCnt * 1000;
+                RonScore = Roundup100(BasicPoint * 6);
+                AgariScore = RonScore;
             }
         } else {
             if (isTsumo) {
-                EastScore = Roundup(BasicPoint * 2) + para.Counters * 100;
-                OthersScore = Roundup(BasicPoint) + para.Counters * 100;
-                AgariScore = EastScore + OthersScore * 2 + para.ReachCnt * 1000;
+                EastScore = Roundup100(BasicPoint * 2);
+                OthersScore = Roundup100(BasicPoint);
+                AgariScore = EastScore + OthersScore * 2;
             } else {
-                RonScore = Roundup(BasicPoint * 4) + para.Counters * 300;
-                AgariScore = RonScore + para.ReachCnt * 1000;
+                RonScore = Roundup100(BasicPoint * 4);
+                AgariScore = RonScore;
             }
         }
-        PlainScore = AgariScore - para.Counters * 300 - para.ReachCnt * 1000;
+        PlainScore = AgariScore;
+        AgariScore += para.ReachCnt * 1000 + Counters * 300;
     }
 };
 
 enum struct AgariFailed {
-    Success, NoAgari, NoYaku,
+    Null, WrongShape, NoYaku,
 };
 
 struct TryAgari {
     AgariResult Result;
-    bool isSuccessful;
+    bool Success;
     AgariFailed Failed;
-    inline TryAgari () : Result(AgariResult()), isSuccessful(false) {}
-    inline TryAgari (const AgariResult &result) : Result(result), isSuccessful(true) {}
-    inline TryAgari (const AgariFailed &failed) : Failed(failed), isSuccessful(false) {}
+    inline TryAgari () : Result(AgariResult()), Success(false) {}
+    inline TryAgari (const AgariResult &result) : Result(result), Success(true) {}
+    inline TryAgari (const AgariFailed &failed) : Failed(failed), Success(false) {}
+    void Print() {
+        if (!Success) {
+            std::cout << "Failed " << sc <int> (Failed) << std::endl;
+            return;
+        }
+        if (Result.Han < 0)
+            std::cout << ManganName[4 - Result.Han] << ' ';
+        else {
+            int ManganLevel = Result.PlainScore / 2000;
+            if (Result.isEast)
+                ManganLevel = ManganLevel * 2 / 3;
+            ManganLevel >>= 1;
+            if (ManganLevel > 2)
+                std::cout << ManganName[ManganLevel >> 1] << ' ';
+            else if (ManganLevel == 2)
+                std::cout << ManganName[0] << ' ';
+            std::cout << Result.Han << "番" << Result.Fu << "符" << ' ';
+        }
+        if (Result.isTsumo) {
+            if (Result.isEast)
+                std::cout << Result.OthersScore << "All" << std::endl;
+            else
+                std::cout << Result.OthersScore << "-" << Result.EastScore << std::endl;
+        }
+        else
+            std::cout << Result.PlainScore << std::endl;
+        std::sort(Result.yaku.begin(), Result.yaku.end());
+        for (auto yaku : Result.yaku)
+            std::cout << YakuName[sc <int> (yaku)] << std::endl;
+        if (Result.isTsumo) {
+            Result.OthersScore += Result.Counters * 100;
+            if (!Result.isEast)
+                Result.EastScore += Result.Counters * 100;
+        }
+        else
+            Result.RonScore += Result.Counters * 300;
+        Result.Counters = 0;
+    }
 };
 
 int cnt[34];
 
 TryAgari isThirteenOrphans (AgariPara para) {
+    memset(cnt, 0, sizeof cnt);
     AgariResult result;
     int YaochuuCnt = 0;
     for (auto handtile : para.HandTile) {
@@ -114,18 +161,18 @@ TryAgari isThirteenOrphans (AgariPara para) {
     switch (YaochuuCnt) {
         case 13:
             if (!para.Target.isYaochuu())
-                return TryAgari(AgariFailed::NoAgari);
+                return TryAgari(AgariFailed::WrongShape);
             result.yaku.pb(Yaku::ThirteenOrphans13Wait);
             result.Han = -2;
             break;
         case 12:
             if (!para.Target.isYaochuu() || cnt[para.Target.GeneralId])
-                return TryAgari(AgariFailed::NoAgari);
+                return TryAgari(AgariFailed::WrongShape);
             result.yaku.pb(Yaku::ThirteenOrphans);
             result.Han = -1;
             break;
         default:
-            return TryAgari(AgariFailed::NoAgari);
+            return TryAgari(AgariFailed::WrongShape);
     }
     if (para.isTenhou) {
         result.Han -= 1;
@@ -143,9 +190,8 @@ TryAgari isThirteenOrphans (AgariPara para) {
 }
 
 TryAgari Agari (AgariPara para) {
-    memset(cnt, 0, sizeof cnt);
     TryAgari TO = isThirteenOrphans(para);
-    if(TO.isSuccessful)
+    if(TO.Success)
         return TO;
     return TryAgari();
     for (auto handtile : para.HandTile)
@@ -156,5 +202,7 @@ TryAgari Agari (AgariPara para) {
             cnt[tile.GeneralId]++;
     }
 }
+
+#undef sc
 
 #endif // agari_hpp
