@@ -69,7 +69,7 @@ enum struct Yaku {
 
     FourConcealedTripletsSingleWait,
     ThirteenOrphans13Wait,
-    NineGates9Wait,
+    PureNineGates,
     BigFourWinds,
 };
 

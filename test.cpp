@@ -155,6 +155,39 @@ void TestAgari (const int &Id) {
             HandTile[2] = Tile('z', 7);
             std::cout << isAgari(HandTile, Tile("0s")) << std::endl;
             break;
+        case 4:
+            HandTile.clear();
+            HandTile = {
+                Tile('z', 1), Tile('z', 1), Tile('z', 1), Tile('z', 2), Tile('z', 2), Tile('z', 2),
+                Tile('z', 3), Tile('z', 3), Tile('z', 3), Tile('z', 4), Tile('z', 4), Tile('z', 4), Tile('z', 5)
+            };
+            para.SelfWind = Wind::East;
+            para.HandTile = HandTile;
+            para.Target = Tile("5z");
+            Agari(para).Print();
+            para.HandTile[11] = Tile("5z");
+            para.isTenhou = 0;
+            Agari(para).Print();
+            para.AgariType = 1;
+            Agari(para).Print();
+            HandTile.clear();
+            HandTile = {
+                Tile('m', 1), Tile('m', 1), Tile('m', 1), Tile('p', 1), Tile('p', 1), Tile('p', 1),
+                Tile('p', 9), Tile('p', 9), Tile('p', 9), Tile('s', 1), Tile('s', 1), Tile('s', 1), Tile('m', 9)
+            };
+            para.HandTile = HandTile;
+            para.Target = Tile("9m");
+            Agari(para).Print();
+            HandTile.clear();
+            HandTile = {
+                Tile('s', 1), Tile('s', 1), Tile('s', 1), Tile('s', 2), Tile('s', 3), Tile('s', 4),
+                Tile('s', 5, 1), Tile('s', 6), Tile('s', 8), Tile('s', 9), Tile('s', 9), Tile('s', 9), Tile('s', 6)
+            };
+            para.HandTile = HandTile;
+            para.Target = Tile("7s");
+            Agari(para).Print();
+            para.isTenhou = 1;
+            Agari(para).Print();
     }
 }
 
@@ -162,7 +195,7 @@ int main () {
     // TestYaku();
     // TestTile();
     // TestGroup();
-    TestAgari(3);
+    TestAgari(4);
 }
 
 #undef sc

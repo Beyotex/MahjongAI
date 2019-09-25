@@ -331,16 +331,17 @@ TryAgari SevenPairs (AgariPara para) {
 
 bool isNormal () {
     static int cnt_tmp[34];
-    for (int i = 0; i < 34; i++)
-        if (cnt[i] >= 2) {
+    for (int j = 0; j < 34; j++)
+        if (cnt[j] >= 2) {
             memcpy(cnt_tmp, cnt, sizeof cnt);
-            cnt_tmp[i] -= 2;
+            cnt_tmp[j] -= 2;
             for (int i = 0; i < 34; i++)
                 if (cnt_tmp[i] >= 3)
                     cnt_tmp[i] -= 3;
             for (int i = 0; i < 25; i++)
-                if (i != 6 && i != 7 && i != 15 && i != 16 && cnt_tmp[i] && cnt_tmp[i + 1] && cnt_tmp[i + 2])
-                    cnt_tmp[i]--, cnt_tmp[i + 1]--, cnt_tmp[i + 2]--;
+                if (i != 7 && i != 8 && i != 16 && i != 17)
+                    while (cnt_tmp[i] && cnt_tmp[i + 1] && cnt_tmp[i + 2])
+                        cnt_tmp[i]--, cnt_tmp[i + 1]--, cnt_tmp[i + 2]--;
             if (*std::max_element(cnt_tmp, cnt_tmp + 34) == 0)
                 return true;
         }
@@ -356,6 +357,119 @@ bool isAgari (std::vector <Tile> HandTile, const Tile &Target) {
     for (auto tile : HandTile)
         cnt[tile.GeneralId]++;
     return isNormal();
+}
+
+TryAgari Yakuman (AgariPara para) {
+    AgariResult result;
+    if (cnt[31] >= 3 && cnt[32] >= 3 && cnt[33] >= 3) {
+        result.Han -= 1;
+        result.yaku.pb(Yaku::BigThreeDrangons);
+    }
+    int Cnt = 0;
+    bool hasPair = 0;
+    for (int i = 27; i < 31; i++)
+        if (cnt[i] >= 3)
+            Cnt++;
+        else if (cnt[i] == 2)
+            hasPair = 1;
+    if (Cnt == 4) {
+        result.Han -= 2;
+        result.yaku.pb(Yaku::BigFourWinds);
+    }
+    else if (Cnt == 3 && hasPair) {
+        result.Han -= 1;
+        result.yaku.pb(Yaku::SmallFourWinds);
+    }
+    Cnt = 0;
+    for (int i = 27; i < 34; i++)
+        Cnt += cnt[i];
+    if (Cnt == 14) {
+        result.Han -= 1;
+        result.yaku.pb(Yaku::AllHonors);
+    }
+    Cnt = cnt[0] + cnt[8] + cnt[9] + cnt[17] + cnt[18] + cnt[26];
+    if (Cnt == 14) {
+        result.Han -= 1;
+        result.yaku.pb(Yaku::AllTerminals);
+    }
+    Cnt = cnt[19] + cnt[20] + cnt[21] + cnt[23] + cnt[25] + cnt[32];
+    if (Cnt == 14) {
+        result.Han -= 1;
+        result.yaku.pb(Yaku::AllGreen);
+    }
+    if (para.isClosed) {
+        int col = (sc <int> (para.HandTile[0].Color) - 109) / 3;
+        if (col < 3) {
+            bool Flag = 1;
+            for (int i = 1; i < 8; i++)
+                if (!cnt[col * 9 + i]) {
+                    Flag = 0;
+                    break;
+                }
+            if (cnt[col * 9] < 3 || cnt[col * 9 + 8] < 3)
+                Flag = 0;
+            if (Flag) {
+                cnt[para.Target.GeneralId]--;
+                for (int i = 1; i < 8; i++)
+                    if (!cnt[col * 9 + i]) {
+                        Flag = 0;
+                        break;
+                    }
+                if (cnt[col * 9] < 3 || cnt[col * 9 + 8] < 3)
+                    Flag = 0;
+                cnt[para.Target.GeneralId]++;
+                if (Flag) {
+                    result.yaku.pb(Yaku::PureNineGates);
+                    result.Han -= 2;
+                } else {
+                    result.yaku.pb(Yaku::NineGates);
+                    result.Han -= 1;
+                }
+            }
+        }
+        Cnt = 0;
+        for (int i = 0; i < 34; i++)
+            if (cnt[i] >= 3)
+                Cnt++;
+        if (Cnt == 4) {
+            Cnt = 0;
+            cnt[para.Target.GeneralId]--;
+            for (int i = 0; i < 34; i++)
+                if (cnt[i] >= 3)
+                    Cnt++;
+            cnt[para.Target.GeneralId]++;
+            if (Cnt == 4) {
+                result.yaku.pb(Yaku::FourConcealedTripletsSingleWait);
+                result.Han -= 2;
+            } else if (!para.AgariType) {
+                result.yaku.pb(Yaku::FourConcealedTriplets);
+                result.Han -= 1;
+            }
+        }
+        if (para.isTenhou) {
+            result.Han -= 1;
+            if (para.SelfWind == Wind::East) {
+                int Size = result.yaku.size();
+                if (Size) {
+                    Size--;
+                    if (result.yaku[Size] == Yaku::NineGates) {
+                        result.yaku[Size] = Yaku::PureNineGates;
+                        result.Han -= 1;
+                    } else if (result.yaku[Size] == Yaku::FourConcealedTriplets) {
+                        result.yaku[Size] = Yaku::FourConcealedTripletsSingleWait;
+                        result.Han -= 1;
+                    }
+                }
+                result.yaku.pb(Yaku::Tenhou);
+            } else
+                result.yaku.pb(Yaku::Chiihou);
+        }
+    }
+    if (result.Han < 0) {
+        result.GetScore(para);
+        return result;
+    }
+    return TryAgari(AgariFailed::Null);
 }
 
 TryAgari Agari (AgariPara para) {
@@ -376,6 +490,10 @@ TryAgari Agari (AgariPara para) {
         for (auto tile : tiles)
             cnt[tile.GeneralId]++;
     }
+    cnt[para.Target.GeneralId]++;
+    if (isNormal())
+        return Yakuman(para);
+    return TryAgari(AgariFailed::WrongShape);
 }
 
 #undef sc
