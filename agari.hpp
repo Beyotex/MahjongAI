@@ -19,7 +19,7 @@ inline int Roundup100 (int a) { return (a + 99) / 100 * 100;}
 struct AgariPara {
     Wind SelfWind, PrevailingWind;
     int ReachTurn, AgariType, ReachCnt, Counters;
-    bool isOneShot, isTenhou, isHaitei;
+    bool isClosed, isOneShot, isTenhou, isHaitei;
     Tile Target;
     std::vector <Tile> HandTile, Dora, UraDora;
     std::vector <Group> Groups;
@@ -27,11 +27,11 @@ struct AgariPara {
     inline AgariPara (const Wind &selfwind, const Wind &prevailingwind, const int &agaritype, 
      const Tile &target,const std::vector <Tile> &handtile, const std::vector <Group> groups = NullGroups,
      const std::vector <Tile> &dora = NullTiles, const std::vector <Tile> &uradora = NullTiles,
-     const int &reachturn = 0, const int &reachcnt = -1, const int &counters = 0,
+     const int &reachturn = 0, const int &reachcnt = -1, const int &counters = 0, const bool &isclosed = 1,
      const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0)
      : SelfWind(selfwind), PrevailingWind(prevailingwind), AgariType(agaritype), Target(target),
      HandTile(handtile), Groups(groups), Dora(dora), UraDora(uradora), ReachTurn(reachturn), ReachCnt(reachcnt),
-     Counters(counters), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {}
+     Counters(counters), isClosed(isclosed), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {}
 };
 
 struct AgariResult {
@@ -116,6 +116,18 @@ struct TryAgari {
             std::cout << "Failed " << sc <int> (Failed) << std::endl;
             return;
         }
+        for (auto yaku : Result.yaku)
+            std::cout << YakuName[sc <int> (yaku)] << std::endl;
+        if (Result.Han > 0) {
+            if (Result.Dora > 0)
+                std::cout << "宝牌 " << Result.Dora << "番" << std::endl;
+            if (Result.AkaDora > 0)
+                std::cout << "红宝牌 " << Result.AkaDora << "番" << std::endl;
+            if (Result.Reach)
+                std::cout << "里宝牌 " << Result.UraDora << "番" << std::endl;
+        }
+        if (Result.Han > 0 && Result.yaku[0] != Yaku::NagashiMangan)
+            std::cout << Result.Han << "番" << Result.Fu << "符" << ' ';
         if (Result.Han < 0)
             std::cout << ManganName[4 - Result.Han] << ' ';
         else {
@@ -127,8 +139,6 @@ struct TryAgari {
                 std::cout << ManganName[ManganLevel >> 1] << ' ';
             else if (ManganLevel == 2)
                 std::cout << ManganName[0] << ' ';
-            if (Result.yaku[0] != Yaku::NagashiMangan)
-                std::cout << Result.Han << "番" << Result.Fu << "符" << ' ';
         }
         if (Result.isTsumo) {
             if (Result.isEast)
@@ -138,16 +148,6 @@ struct TryAgari {
         }
         else
             std::cout << Result.PlainScore << std::endl;
-        for (auto yaku : Result.yaku)
-            std::cout << YakuName[sc <int> (yaku)] << std::endl;
-        if (Result.Han > 0) {
-            if (Result.Dora > 0)
-                std::cout << "宝牌 " << Result.Dora << "番" << std::endl;
-            if (Result.AkaDora > 0)
-                std::cout << "红宝牌 " << Result.AkaDora << "番" << std::endl;
-            if (Result.Reach)
-                std::cout << "里宝牌 " << Result.UraDora << "番" << std::endl;
-        }
     }
     void ProcessCounters () {
         if (Result.isTsumo) {
@@ -163,7 +163,18 @@ struct TryAgari {
 
 int cnt[34];
 
-TryAgari isThirteenOrphans (AgariPara para) {
+bool isThirteenOrphans (const std::vector <Tile> &HandTile) {
+    memset(cnt, 0, sizeof cnt);
+    int YaochuuCnt = 0;
+    for (auto handtile : HandTile) {
+        int id = handtile.GeneralId;
+        if (!cnt[id])
+            cnt[id]++, YaochuuCnt++;
+    }
+    return YaochuuCnt == 13;
+}
+
+TryAgari ThirteenOrphans (AgariPara para) {
     memset(cnt, 0, sizeof cnt);
     AgariResult result;
     int YaochuuCnt = 0;
@@ -203,7 +214,16 @@ TryAgari isThirteenOrphans (AgariPara para) {
     return TryAgari(result);
 }
 
-TryAgari isSevenPairs (AgariPara para) {
+bool isSevenPairs (const std::vector <Tile> &HandTile) {
+    memset(cnt, 0, sizeof cnt);
+    int PairCnt = 0;
+    for (auto tile : HandTile)
+        if (++cnt[tile.GeneralId] == 2)
+            PairCnt++;
+    return PairCnt == 7;
+}
+
+TryAgari SevenPairs (AgariPara para) {
     memset(cnt, 0, sizeof cnt);
     AgariResult result;
     int PairCnt = 0;
@@ -309,15 +329,45 @@ TryAgari isSevenPairs (AgariPara para) {
     return TryAgari(result);
 }
 
+bool isNormal () {
+    static int cnt_tmp[34];
+    for (int i = 0; i < 34; i++)
+        if (cnt[i] >= 2) {
+            memcpy(cnt_tmp, cnt, sizeof cnt);
+            cnt_tmp[i] -= 2;
+            for (int i = 0; i < 34; i++)
+                if (cnt_tmp[i] >= 3)
+                    cnt_tmp[i] -= 3;
+            for (int i = 0; i < 25; i++)
+                if (i != 6 && i != 7 && i != 15 && i != 16 && cnt_tmp[i] && cnt_tmp[i + 1] && cnt_tmp[i + 2])
+                    cnt_tmp[i]--, cnt_tmp[i + 1]--, cnt_tmp[i + 2]--;
+            if (*std::max_element(cnt_tmp, cnt_tmp + 34) == 0)
+                return true;
+        }
+    return false;
+}
+
+bool isAgari (std::vector <Tile> HandTile, const Tile &Target) {
+    HandTile.pb(Target);
+    std::sort(HandTile.begin(), HandTile.end());
+    if (isThirteenOrphans(HandTile) || isSevenPairs(HandTile))
+        return true;
+    memset(cnt, 0, sizeof cnt);
+    for (auto tile : HandTile)
+        cnt[tile.GeneralId]++;
+    return isNormal();
+}
+
 TryAgari Agari (AgariPara para) {
     std::sort(para.HandTile.begin(), para.HandTile.end());
-    TryAgari TO = isThirteenOrphans(para);
-    if (TO.Success)
-        return TO;
-    TryAgari SP = isSevenPairs(para);
-    if (SP.Success)
-        return SP;
-    return TryAgari();
+    if (para.isClosed) {
+        TryAgari TO = ThirteenOrphans(para);
+        if (TO.Success)
+            return TO;
+        TryAgari SP = SevenPairs(para);
+        if (SP.Success && SP.Result.Han < 0)
+            return SP;
+    }
     memset(cnt, 0, sizeof cnt);
     for (auto handtile : para.HandTile)
         cnt[handtile.GeneralId]++;

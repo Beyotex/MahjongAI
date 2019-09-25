@@ -241,7 +241,6 @@ struct Group {
             Tiles.pb(Tile(Color, Value, AkaState & 1));
         } else {
             Tiles.pb(Tile(Color, Value));
-            Tiles.pb(Tile(Color, Value));
             Tiles.pb(Tile(Color, Value, AkaState & 2));
             Tiles.pb(Tile(Color, Value, AkaState & 1));
         }

@@ -51,7 +51,7 @@ void TestAgari (const int &Id) {
         Tile('m', 1), Tile('m', 9), Tile('p', 1), Tile('p', 9), Tile('s', 1), Tile('s', 9),
         Tile('z', 1), Tile('z', 2), Tile('z', 3), Tile('z', 4), Tile('z', 5), Tile('z', 6), Tile('z', 6)
     };
-    AgariPara para(Wind::East, Wind::East, 0, Tile("1s"), HandTile, NullGroups, NullTiles, NullTiles, 0, 2, 3, 0, 1);
+    AgariPara para(Wind::East, Wind::East, 0, Tile("1s"), HandTile, NullGroups, NullTiles, NullTiles, 0, 2, 3, 1, 0, 1);
     AgariResult result;
     switch (Id) {
         case 0:
@@ -136,6 +136,25 @@ void TestAgari (const int &Id) {
             para.UraDora = {Tile("4m")};
             Agari(para).Print();
             break;
+        case 3:
+            std::cout << isAgari(HandTile, Tile("7z")) << std::endl;
+            HandTile.clear();
+            for (int i = 1; i <= 7; i++) {
+                HandTile.pb(Tile('p', i));
+                if (i != 5)
+                    HandTile.pb(Tile('p', i));
+            }
+            std::cout << isAgari(HandTile, Tile("0s")) << std::endl;
+            std::cout << isAgari(HandTile, Tile("0p")) << std::endl;
+            HandTile.clear();
+            HandTile = {
+                Tile('z', 3), Tile('z', 3), Tile('z', 3), Tile('m', 3), Tile('m', 4), Tile('m', 5, 1),
+                Tile('p', 3), Tile('p', 4), Tile('p', 5, 1), Tile('s', 3), Tile('s', 4), Tile('z', 7), Tile('z', 7)
+            };
+            std::cout << isAgari(HandTile, Tile("0s")) << std::endl;
+            HandTile[2] = Tile('z', 7);
+            std::cout << isAgari(HandTile, Tile("0s")) << std::endl;
+            break;
     }
 }
 
@@ -143,7 +162,7 @@ int main () {
     // TestYaku();
     // TestTile();
     // TestGroup();
-    TestAgari(2);
+    TestAgari(3);
 }
 
 #undef sc
