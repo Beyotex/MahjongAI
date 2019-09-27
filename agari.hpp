@@ -381,6 +381,14 @@ TryAgari Yakuman (AgariPara para) {
         result.yaku.pb(Yaku::SmallFourWinds);
     }
     Cnt = 0;
+    for (auto group : para.Groups)
+        if (group.Type == GroupType::Kan)
+            Cnt++;
+    if (Cnt == 4) {
+        result.Han -= 1;
+        result.yaku.pb(Yaku::FourKans);
+    }
+    Cnt = 0;
     for (int i = 27; i < 34; i++)
         Cnt += cnt[i];
     if (Cnt == 14) {
@@ -469,31 +477,34 @@ TryAgari Yakuman (AgariPara para) {
         result.GetScore(para);
         return result;
     }
-    return TryAgari(AgariFailed::Null);
+    return TryAgari(AgariFailed::NoYaku);
 }
 
 TryAgari Agari (AgariPara para) {
     std::sort(para.HandTile.begin(), para.HandTile.end());
+    TryAgari ClosedResult, Result;
     if (para.isClosed) {
-        TryAgari TO = ThirteenOrphans(para);
-        if (TO.Success)
-            return TO;
-        TryAgari SP = SevenPairs(para);
-        if (SP.Success && SP.Result.Han < 0)
-            return SP;
+        ClosedResult = ThirteenOrphans(para);
+        if (ClosedResult.Success)
+            return ClosedResult;
+        ClosedResult = SevenPairs(para);
+        if (ClosedResult.Success && ClosedResult.Result.Han < 0)
+            return ClosedResult;
     }
     memset(cnt, 0, sizeof cnt);
     for (auto handtile : para.HandTile)
         cnt[handtile.GeneralId]++;
+    cnt[para.Target.GeneralId]++;
+    if (!isNormal())
+        return TryAgari(AgariFailed::WrongShape);
     for (auto groups : para.Groups) {
         auto tiles = groups.getTiles();
         for (auto tile : tiles)
             cnt[tile.GeneralId]++;
     }
-    cnt[para.Target.GeneralId]++;
-    if (isNormal())
-        return Yakuman(para);
-    return TryAgari(AgariFailed::WrongShape);
+    Result = Yakuman(para);
+    if (Result.Success)
+        return Result;
 }
 
 #undef sc

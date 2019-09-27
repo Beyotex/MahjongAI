@@ -187,6 +187,17 @@ void TestAgari (const int &Id) {
             para.Target = Tile("7s");
             Agari(para).Print();
             para.isTenhou = 1;
+            para.AgariType = 0;
+            Agari(para).Print();
+            para.isTenhou = 0;
+            para.HandTile = {Tile('z', 6)};
+            para.Groups = {
+                InitKan(Tile('z', 1), Tile('z', 1), Tile('z', 1), Tile('z', 1)),
+                InitKan(Tile('z', 2), Tile('z', 2), Tile('z', 2), Tile('z', 2)),
+                InitKan(Tile('z', 3), Tile('z', 3), Tile('z', 3), Tile('z', 3)),
+                InitKan(Tile('z', 4), Tile('z', 4), Tile('z', 4), Tile('z', 4))
+            };
+            para.Target = Tile('z', 6);
             Agari(para).Print();
     }
 }
