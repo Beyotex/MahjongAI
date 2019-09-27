@@ -423,7 +423,7 @@ Group InitPair (Tile a, Tile b) {
     return Group(GroupType::Pair, a.Color, a.Value, b.isAka, 0);
 }
 /*
-state = 0 无副露
+state = 0 暗刻
 state = 1,2,3 碰/荣和下家，对家，上家
 */
 Group InitTriplet (Tile a, Tile b, Tile c, int state = 0) {
@@ -494,5 +494,6 @@ Group InitSequence (Tile a, Tile b, Tile c, int state = 0) {
 }
 
 #undef sc
+#undef pb
 
 #endif // common_hpp

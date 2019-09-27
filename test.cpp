@@ -1,6 +1,8 @@
+#include <cstdio>
 #include <iostream>
 #include "common.hpp"
 #include "agari.hpp"
+#include "wall.hpp"
 #define sc static_cast
 
 void TestTile () {
@@ -202,11 +204,26 @@ void TestAgari (const int &Id) {
     }
 }
 
+void TestWall () {
+    Wall wall;
+    wall.reset();
+    std::cout << wall.FullWall[52].Print() << std::endl;
+    for (int i = 14; i; i--)
+        std::cout << wall.FullWall[136 - i].Print() << ' ';
+    std::cout << std::endl;
+    std::cout << wall.getDora(0).Print() << ' ' << wall.getUraDora(0).Print() << std::endl;
+    std::cout << wall.getNext().Print() << std::endl;
+    std::cout << wall.Kan().Print() << std::endl;
+    std::cout << wall.getDora(1).Print() << ' ' << wall.getUraDora(1).Print() << std::endl;
+    std::cout << wall.LeftTiles() << std::endl;
+}
+
 int main () {
     // TestYaku();
     // TestTile();
     // TestGroup();
-    TestAgari(4);
+    // TestAgari(4);
+    TestWall();
 }
 
 #undef sc

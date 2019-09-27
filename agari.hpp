@@ -7,6 +7,7 @@
 #include <iostream>
 #include "common.hpp"
 #define sc static_cast
+#define pb push_back
 
 const std::string ManganName [] = {
     "满贯", "跳满", "倍满", "三倍满", "累计役满", 
@@ -330,7 +331,7 @@ TryAgari SevenPairs (AgariPara para) {
 }
 
 bool isNormal () {
-    static int cnt_tmp[34];
+    int cnt_tmp[34];
     for (int j = 0; j < 34; j++)
         if (cnt[j] >= 2) {
             memcpy(cnt_tmp, cnt, sizeof cnt);
@@ -508,5 +509,6 @@ TryAgari Agari (AgariPara para) {
 }
 
 #undef sc
+#undef pb
 
 #endif // agari_hpp
