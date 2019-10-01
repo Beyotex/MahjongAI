@@ -119,7 +119,7 @@ struct TryAgari {
         }
         for (auto yaku : Result.yaku)
             std::cout << YakuName[sc <int> (yaku)] << std::endl;
-        if (Result.Han > 0) {
+        if (Result.Han > 0 && Result.yaku[0] != Yaku::NagashiMangan) {
             if (Result.Dora > 0)
                 std::cout << "宝牌 " << Result.Dora << "番" << std::endl;
             if (Result.AkaDora > 0)

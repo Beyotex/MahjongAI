@@ -30,8 +30,10 @@ struct Wall {
         WallId = 52, HaiteiId = 121, RinShanId = 136;
     }
     inline void getHand (const int &Id, std::vector <Tile> &HandTile) {
-        for (int i = 0; i < 13; i++)
-            HandTile.pb(FullWall[Id * 13 + i]);
+        for (int k = 0; k < 3; k++)
+            for (int i = 0; i < 4; i++)
+                HandTile.pb(FullWall[k * 16 + Id * 4 + i]);
+        HandTile.pb(FullWall[48 + Id]);
     }
     inline Tile getNext () {
         return FullWall[WallId++];
