@@ -49,8 +49,11 @@ struct AgariResult {
          AkaDora = UraDora = PlainScore = AgariScore = RonScore = EastScore = OthersScore = 0;
     }
     inline bool operator < (const AgariResult &rhs) const {
-		if (PlainScore == rhs.PlainScore)
+		if (PlainScore == rhs.PlainScore) {
+			if (Han == rhs.Han)
+				return Fu < rhs.Fu;
 			return Han < rhs.Han;
+		}
         return PlainScore < rhs.PlainScore;
     }
     inline bool operator == (const AgariResult &rhs) const {
@@ -500,11 +503,10 @@ TryAgari Yakuman (AgariPara para) {
 }
 
 TryAgari AgariSearch (const AgariPara &para, int dep, std::vector <Tile> &HandTile, std::vector <Group> &Groups) {
-	assert(dep >= 0);
-	std::cout << dep << ' ';
-	for (auto group : Groups)
-		std::cout << group.Print() << ' ';
-	std::cout << std::endl;
+//	std::cout << dep << ' ';
+//	for (auto group : Groups)
+//		std::cout << group.Print() << ' ';
+//	std::cout << std::endl;
 	if (!HandTile.size())
 		return AgariCalc(para, Groups);
 	TryAgari BestResult;
@@ -541,14 +543,14 @@ TryAgari AgariSearch (const AgariPara &para, int dep, std::vector <Tile> &HandTi
 					CurGroups.pb(InitSequence(HandTile[id0], HandTile[id1], HandTile[id2]));
 					CurGroups.pb(InitSequence(HandTile[id0 + 1], HandTile[id1 + 1], HandTile[id2 + 1]));
 					CurGroups.pb(InitSequence(HandTile[id0 + 2], HandTile[id1 + 2], HandTile[id2 + 2]));
-					BestResult = std::max(BestResult, AgariSearch(para, dep - 3, HandTile, Groups));
+					BestResult = std::max(BestResult, AgariSearch(para, dep - 3, CurTile, CurGroups));
 					CurGroups.pop_back();
 					CurGroups.pop_back();
 					CurGroups.pop_back();
 					CurGroups.pb(InitTriplet(HandTile[id0], HandTile[id0 + 1], HandTile[id0 + 2]));
 					CurGroups.pb(InitTriplet(HandTile[id1], HandTile[id1 + 1], HandTile[id1 + 2]));
 					CurGroups.pb(InitTriplet(HandTile[id2], HandTile[id2 + 1], HandTile[id2 + 2]));
-					BestResult = std::max(BestResult, AgariSearch(para, dep - 3, HandTile, Groups));
+					BestResult = std::max(BestResult, AgariSearch(para, dep - 3, CurTile, CurGroups));
 					return BestResult;
 				}
 	}

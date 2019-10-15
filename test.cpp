@@ -297,11 +297,15 @@ void TestAgari (const int &Id) {
 			Agari(para).Print();
 			HandTile = {
 				Tile('s', 3), Tile('s', 3), Tile('s', 3), Tile('s', 4), Tile('s', 4), Tile('s', 4), 
-				Tile('s', 2), Tile('s', 2), Tile('s', 2), Tile('s', 3), Tile('s', 4), Tile('s', 2), Tile('s', 6)
+				Tile('s', 2), Tile('s', 2), Tile('s', 2), Tile('s', 3), Tile('s', 4), Tile('s', 5), Tile('s', 6)
 			};
 			para.HandTile = HandTile;
 			para.Target = Tile('s', 6);
 			para.UraDora = {Tile('s', 1)};
+			Agari(para).Print();
+			para.HandTile[11] = Tile('s', 2);
+			Agari(para).Print();
+			para.HandTile[9] = para.HandTile[10] = para.HandTile[11] = Tile('s', 8);
 			Agari(para).Print();
     }
 }

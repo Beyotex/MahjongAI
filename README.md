@@ -1,8 +1,6 @@
 # MahjongProcessor
 
-**注意，必须使用 `C++11` 或更新的版本。**
-
-更多示例见 `test.cpp`。
+更多实例详见 `test.cpp`。
 
 目前已经完成的功能有：
 - 点数计算
@@ -10,7 +8,7 @@
 
 ## 点数计算
 
-和牌参数是一个 `AgariPara` 类，其构造函数如下：
+和牌参数是一个 `AgariPara` 类，其构造函数如下（加粗项必填）：
 
 ```cpp
 AgariPara (const Wind &selfwind, const Wind &prevailingwind, const bool &agaritype, 
@@ -20,11 +18,11 @@ AgariPara (const Wind &selfwind, const Wind &prevailingwind, const bool &agarity
  const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0)
 ```
 
-- `selfwind`, `prevailingwind`：自风，场风。`Wind` 的定义见 `common.hpp`，调用如 `Wind::East`。
-- `agaritype`：和牌方式。为 0 表示自摸，为 1 表示荣和。
-- `target`：所和的牌。
-- `handtile`：手牌。以上各项为必填。`Tile` 的定义见 `common.hpp`，调用如 `Tile('z', 1)`、`Tile('s', 5, 1)`（第三个参数表示为赤宝牌）、`Tile("0m")`。
-- `groups`：落地手牌，包括副露与暗杠。
+- **`selfwind`**, **`prevailingwind`**：自风，场风。`Wind` 的定义见 `common.hpp`，调用如 `Wind::East`。
+- **`agaritype`**：和牌方式。为 0 表示自摸，为 1 表示荣和。
+- **`target`**：所和的牌。
+- **`handtile`**：手牌。`Tile` 的定义见 `common.hpp`，调用如 `Tile('z', 1)`、`Tile('s', 5, 1)`（第三个参数表示为赤宝牌）、`Tile("0m")`。
+- `groups`：落地手牌，包括副露与暗杠。`Groups` 的定义见 `common.hpp`，调用如 `InitSequence(Tile("4p"), Tile("0p"), Tile("6p"), 1)`、`InitTriplet(Tile("0p"), Tile("5p"), Tile("5p"), 3)`、`InitKan(Tile("5p"), Tile("5p"), Tile("5p"), Tile("0p"), 8 + 7)`。最后一个参数为 `state`，门清时为 0，副露时标明来源，具体见这些函数的注释。
 - `dora`：宝牌指示牌。
 - `uradora`：里宝牌指示牌。
 - `reachturn`：立直巡目。为 -1 表示未立直。
