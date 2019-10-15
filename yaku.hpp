@@ -1,10 +1,11 @@
 #ifndef yaku_hpp
 #define yaku_hpp
 
+#include <cstring>
 #include "common.hpp"
 #include "agari.hpp"
 
-// 未完成：流满 平和
+// 未完成：流满
 TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 	AgariResult result;
 	bool AS = 1;
@@ -48,7 +49,7 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 			} 
 		}
 		int DragonsCnt = 0;
-		int SelfWind = sc <int> (para.SelfWind), PrevailingWind = sc <int> (para.PrevailingWind);
+		int SelfWind = sc <int> (para.SelfWind) + 1, PrevailingWind = sc <int> (para.PrevailingWind) + 1;
 		for (auto group : Groups)
 			if ((group.Type == GroupType::Triplet || group.Type == GroupType::Kan) && group.Color == 'z')
 				switch (group.Value) {
@@ -91,6 +92,32 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 			c++;
 	if (c == 3) {
 		result.yaku.pb(Yaku::ThreeKans);
+		result.Han += 2;
+	}
+	c = 0;
+	for (auto group : Groups)
+		if (group.Type == GroupType::Triplet && !group.State) {
+			// 荣和暗刻
+			if (para.AgariType && group.Color == para.Target.Color && group.Value == para.Target.Value) {
+				bool used = 1;
+				for (auto group1 : Groups)
+					// 如果有一个暗顺在用同一张牌，就让它变成明顺
+					if (group1.Type == GroupType::Sequence && group1.Color == para.Target.Color && !group1.State) {
+						int curid = group1.Value, stdid = para.Target.Value;
+						if (curid == stdid || curid + 1 == stdid || curid + 2 == stdid) {
+							used = 0;
+							break;
+						}
+					}
+				if (used)
+					group.State = 7;
+				if (!group.State)
+					c++;
+			}
+		} else if (group.Type == GroupType::Kan && !group.State)
+			c++;
+	if (c == 3) {
+		result.yaku.pb(Yaku::ThreeConcealedTriplets);
 		result.Han += 2;
 	}
 	bool AT = 1;
@@ -231,7 +258,60 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 			break;
 		}
 	}
+	for (auto group : Groups) {
+		if (group.Type == GroupType::Pair) {
+			if (group.Color == 'z') {
+				if (group.Value > 4)
+					result.Fu += 2;
+				int SelfWind = sc <int> (para.SelfWind) + 1, PrevailingWind = sc <int> (para.PrevailingWind) + 1;
+				if (group.Value == SelfWind)
+					result.Fu += 2;
+				if (group.Value == PrevailingWind)
+					result.Fu += 2;
+			} 
+		} else if (group.Type == GroupType::Kan) {
+			int fu = 8;
+			if (group.Color == 'z' || group.Value == 1 || group.Value == 9)
+				fu <<= 1;
+			if (!group.State)
+				fu <<= 1;
+			result.Fu += fu;
+		} else if (group.Type == GroupType::Triplet) {
+			int fu = 2;
+			if (group.Color == 'z' || group.Value == 1 || group.Value == 9)
+				fu <<= 1;
+			if (!group.State)
+				fu <<= 1;
+			result.Fu += fu;
+		}
+	}
+	if (result.Fu == 20)
+		if (para.isClosed) {
+			result.yaku.pb(Yaku::Pinfu);
+			result.Han += 1;
+		} else
+			result.Fu = 30;
+	if (!para.AgariType && result.Fu != 20)
+		result.Fu += 2;
+	if (para.isClosed && para.AgariType)
+		result.Fu += 10;
+	result.Fu = Roundup10(result.Fu);
     if (result.Han > 0) {
+		int cnt_tmp[34];
+		memset(cnt_tmp, 0, sizeof cnt_tmp);
+		for (auto groups : Groups) {
+			auto tiles = groups.getTiles(1);
+			for (auto tile : tiles) {
+				cnt_tmp[tile.GeneralId]++;
+				if (tile.isAka)
+					result.AkaDora++;
+			}
+		}
+		for (auto dora : para.Dora)
+			result.Dora += cnt_tmp[dora.Next().GeneralId];
+		for (auto dora : para.UraDora)
+			result.UraDora += cnt_tmp[dora.Next().GeneralId];
+		result.Han += result.Dora + result.AkaDora + result.UraDora;
         result.GetScore(para);
         return result;
     }

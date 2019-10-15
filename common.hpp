@@ -76,8 +76,9 @@ enum struct Yaku {
 const std::string YakuName [] = {
     "立直 1番", 
     "两立直 2番", 
-    "一发 1番",
     "门前清自摸和 1番",
+    "一发 1番",
+	
     "断幺九 1番", 
     "役牌：门风牌 1番", 
     "役牌：场风牌 1番", 
@@ -224,7 +225,7 @@ struct Group {
     inline bool operator != (const Group &rhs) const {
         return !(*this == rhs);
     }
-	std::vector <Tile> getTiles () {
+	std::vector <Tile> getTiles (bool Full = 0) {
         if (Type == GroupType::NullType)
             return NullTiles;
         std::vector <Tile> Tiles;
@@ -240,6 +241,8 @@ struct Group {
             Tiles.pb(Tile(Color, Value, AkaState & 2));
             Tiles.pb(Tile(Color, Value, AkaState & 1));
         } else {
+			if (Full)
+				Tiles.pb(Tile(Color, Value));
             Tiles.pb(Tile(Color, Value));
             Tiles.pb(Tile(Color, Value, AkaState & 2));
             Tiles.pb(Tile(Color, Value, AkaState & 1));

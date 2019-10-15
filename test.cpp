@@ -53,7 +53,9 @@ void TestAgari (const int &Id) {
         Tile('m', 1), Tile('m', 9), Tile('p', 1), Tile('p', 9), Tile('s', 1), Tile('s', 9),
         Tile('z', 1), Tile('z', 2), Tile('z', 3), Tile('z', 4), Tile('z', 5), Tile('z', 6), Tile('z', 6)
     };
-    AgariPara para(Wind::East, Wind::East, 0, Tile("1s"), HandTile, NullGroups, NullTiles, NullTiles, 0, 2, 3, 0, 1, 0, 1, 0);
+    AgariPara para(Wind::East, Wind::East, 0, Tile("1s"), HandTile);
+	para.isTenhou = 1;
+	para.AgariType = 0;
     AgariResult result;
     switch (Id) {
         case 0:
@@ -213,9 +215,13 @@ void TestAgari (const int &Id) {
 			para.Target = Tile('s', 3);
 			para.isTenhou = 0;
 			para.ReachTurn = 1;
+			para.isOneShot = 1;
+			para.AgariType = 0;
+			para.Dora = {Tile('z', 3)};
             Agari(para).Print();
 			para.HandTile[1] = Tile('m', 1);
 			para.HandTile[2] = Tile('m', 1);
+			para.UraDora = {Tile('m', 9)};
             Agari(para).Print();
     }
 }
