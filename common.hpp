@@ -219,7 +219,7 @@ struct Group {
         return Type < rhs.Type || Color < rhs.Color || Value < rhs.Value;
     }
     inline bool operator == (const Group &rhs) const {
-        return Type == rhs.Type && Color == rhs.Color && Value == rhs.Value && AkaState == rhs.AkaState && State == rhs.State;
+        return Type == rhs.Type && Color == rhs.Color && Value == rhs.Value;
     }
     inline bool operator != (const Group &rhs) const {
         return !(*this == rhs);
@@ -410,6 +410,16 @@ struct Group {
             Color += 32;
         return Name;
     }
+	inline bool isYaochuu () {
+		if (Type == GroupType::Sequence || Type == GroupType::NullType)
+			return false;
+		return Color == 'z' || Value == 1 || Value == 9;
+	}
+	inline bool hasYaochuu () {
+		if (Type == GroupType::NullType)
+			return false;
+		return (Color == 'z' || Value == 1 || Value == 9) || (Type == GroupType::Sequence && Value == 7);
+	}
 };
 
 const Group NullGroup = Group(GroupType::NullType, 0, 0, 0, 0);

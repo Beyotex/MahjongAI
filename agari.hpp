@@ -19,17 +19,17 @@ inline int Roundup100 (int a) { return (a + 99) / 100 * 100;}
 
 struct AgariPara {
     Wind SelfWind, PrevailingWind;
-    int ReachTurn, AgariType, ReachCnt, Counters;
-    bool isClosed, isOneShot, isTenhou, isHaitei;
+    int ReachTurn, ReachCnt, Counters;
+    bool AgariType, onKan, isClosed, isOneShot, isTenhou, isHaitei;
     Tile Target;
     std::vector <Tile> HandTile, Dora, UraDora;
     std::vector <Group> Groups;
     inline AgariPara () {}
-    inline AgariPara (const Wind &selfwind, const Wind &prevailingwind, const int &agaritype, 
+    inline AgariPara (const Wind &selfwind, const Wind &prevailingwind, const bool &agaritype, 
      const Tile &target,const std::vector <Tile> &handtile, const std::vector <Group> groups = NullGroups,
      const std::vector <Tile> &dora = NullTiles, const std::vector <Tile> &uradora = NullTiles,
-     const int &reachturn = 0, const int &reachcnt = -1, const int &counters = 0, const bool &isclosed = 1,
-     const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0)
+     const int &reachturn = -1, const int &reachcnt = 0, const int &counters = 0, const bool &onkan = 0,
+	 const bool &isclosed = 1, const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0)
      : SelfWind(selfwind), PrevailingWind(prevailingwind), AgariType(agaritype), Target(target),
      HandTile(handtile), Groups(groups), Dora(dora), UraDora(uradora), ReachTurn(reachturn), ReachCnt(reachcnt),
      Counters(counters), isClosed(isclosed), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {}
@@ -43,7 +43,8 @@ struct AgariResult {
     int PlainScore, AgariScore, RonScore, EastScore, OthersScore;
     std::vector <Yaku> yaku;
     inline AgariResult () {
-        AgariId = RonId = Counters = isEast = isTsumo = Reach = Han = Fu = Dora = 
+		Fu = 20;
+        AgariId = RonId = Counters = isEast = isTsumo = Reach = Han = Dora = 
          AkaDora = UraDora = PlainScore = AgariScore = RonScore = EastScore = OthersScore = 0;
     }
     inline bool operator < (const AgariResult &rhs) const {
@@ -168,6 +169,8 @@ struct TryAgari {
 		return Result < rhs.Result;
 	}
 };
+
+#include "yaku.hpp"
 
 int cnt[34];
 
@@ -491,10 +494,6 @@ TryAgari Yakuman (AgariPara para) {
         return result;
     }
     return TryAgari(AgariFailed::NoYaku);
-}
-
-TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
-	return TryAgari(AgariFailed::NoYaku);
 }
 
 TryAgari AgariSearch (const AgariPara &para, int dep, std::vector <Tile> &HandTile, std::vector <Group> &Groups) {
