@@ -1,49 +1,25 @@
 # MahjongProcessor
 
-更多实例详见 `test.cpp`。
-
-目前已经完成的功能有：
-- 点数计算
-- 牌山生成
-
-## 点数计算
-
-和牌参数是一个 `AgariPara` 类，其构造函数如下（加粗项必填）：
-
+## `common.hpp`：通用头文件
 ```cpp
-AgariPara (const Wind &selfwind, const Wind &prevailingwind, const bool &agaritype, 
- const Tile &target, const std::vector <Tile> &handtile, const std::vector <Group> groups = NullGroups, 
- const std::vector <Tile> &dora = NullTiles, const std::vector <Tile> &uradora = NullTiles, 
- const int &reachturn = -1, const int &reachcnt = 0, const int &counters = 0, const bool &onkan = 0, 
- const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0)
+enum struct Wind; // 风
+enum struct Yaku; // 役种
+struct Tile { // 牌
+	// 创建一张手牌。color = 花色，value = 编号，isaka = 是否为赤宝牌
+	Tile(const char &color, const int &value, const bool &isaka = 0);
+	// 创建一张手牌。前一个字符为编号，后一个字符为花色，编号为 0 表示是赤宝牌
+	Tile(const std::string &Name);
+	std::string Print(); // 打印一张手牌，格式如上一个函数的 Name
+	Tile Next(); // 返回宝牌顺序中的下一张牌
+};
+struct Group { // 面子或雀头
+	// 返回该面子或雀头中的所有牌。Full 为 1 表示杠子取全部四张牌，为 0 只取三张
+	std::vector <Tile> getTiles(bool Full = 0);
+	std::string Print(); // 打印该面子或雀头
+};
+Group InitPair(Tile a, Tile b); // 构造雀头
+Group InitTriplet(Tile a, Tile b, Tile c, int state = 0); // 构造刻子
+Group InitKan(Tile a, Tile b, Tile c, Tile d, int state = 0); // 构造杠子
+Group InitSequence(Tile a, Tile b, Tile c, int state = 0); // 构造顺子
+// 以上三个函数中的最后一张牌可以是所鸣的牌，state 见函数周围的注释
 ```
-
-- **`selfwind`**, **`prevailingwind`**：自风，场风。`Wind` 的定义见 `common.hpp`，调用如 `Wind::East`。
-- **`agaritype`**：和牌方式。为 0 表示自摸，为 1 表示荣和。
-- **`target`**：所和的牌。
-- **`handtile`**：手牌。`Tile` 的定义见 `common.hpp`，调用如 `Tile('z', 1)`、`Tile('s', 5, 1)`（第三个参数表示为赤宝牌）、`Tile("0m")`。
-- `groups`：落地手牌，包括副露与暗杠。`Groups` 的定义见 `common.hpp`，调用如 `InitSequence(Tile("4p"), Tile("0p"), Tile("6p"), 1)`、`InitTriplet(Tile("0p"), Tile("5p"), Tile("5p"), 3)`、`InitKan(Tile("5p"), Tile("5p"), Tile("5p"), Tile("0p"), 8 + 7)`。最后一个参数为 `state`，门清时为 0，副露时标明来源，具体见这些函数的注释。
-- `dora`：宝牌指示牌。
-- `uradora`：里宝牌指示牌。
-- `reachturn`：立直巡目。为 -1 表示未立直。
-- `counters`：本场棒数。
-- `onkan`：是否为枪杠/岭上开花。
-- `isoneshot`：是否一发。
-- `istenhou`：是否为天和/地和。
-- `ishaitei`：是否为海底摸月/河底捞鱼。
-
-调用 `Agari(para).Print()`，其中 `para` 为和牌参数，打印该手牌的得点与役种。
-
-暂不支持流局满贯。
-
-## 牌山生成
-
-牌山是一个 `Wall` 类。
-
-- `reset()`：洗牌。
-- `getHand(const int &Id, std::vector <int> &HandTile)`：把 `Id` 家的配牌填入 `HandTile`。`Id` 为 0 表示东家，为 1 表示南家，以此类推。
-- `getNext()`：摸一张牌。注意，庄家配牌也是 13 张，也需调用 `getNext()`。
-- `Kan()`：开杠，返回岭上牌。
-- `getDora(const int &Id)`：返回第 `Id` 张宝牌指示牌，注意开局时翻开的宝牌为第 0 张。
-- `getUraDora(const int &Id)`：返回第 `Id` 张里宝牌指示牌。
-- `LeftTiles()`：返回牌山剩余牌数。
