@@ -224,28 +224,6 @@ struct Group {
     inline bool operator != (const Group &rhs) const {
         return !(*this == rhs);
     }
-    std::vector <Tile> getTiles () {
-        if (Type == GroupType::NullType)
-            return NullTiles;
-        std::vector <Tile> Tiles;
-        if (Type == GroupType::Pair) {
-            Tiles.pb(Tile(Color, Value));
-            Tiles.pb(Tile(Color, Value, AkaState & 1));
-        } else if (Type == GroupType::Sequence) {
-            Tiles.pb(Tile(Color, Value, AkaState & 4));
-            Tiles.pb(Tile(Color, Value + 1, AkaState & 2));
-            Tiles.pb(Tile(Color, Value + 2, AkaState & 1));
-        } else if (Type == GroupType::Triplet) {
-            Tiles.pb(Tile(Color, Value));
-            Tiles.pb(Tile(Color, Value, AkaState & 2));
-            Tiles.pb(Tile(Color, Value, AkaState & 1));
-        } else {
-            Tiles.pb(Tile(Color, Value));
-            Tiles.pb(Tile(Color, Value, AkaState & 2));
-            Tiles.pb(Tile(Color, Value, AkaState & 1));
-        }
-        return Tiles;
-    }
     std::string Print () {
         if (Type == GroupType::NullType)
             return "Invalid Group";

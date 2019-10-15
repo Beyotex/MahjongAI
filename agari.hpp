@@ -2,9 +2,9 @@
 #define agari_hpp
 
 #include <vector>
+#include <string>
 #include <iostream>
 #include <cstring>
-#include <iostream>
 #include "common.hpp"
 #define sc static_cast
 #define pb push_back
@@ -160,6 +160,13 @@ struct TryAgari {
             Result.RonScore += Result.Counters * 300;
         Result.Counters = 0;
     }
+	inline bool operator < (const TryAgari &rhs) const {
+		if (Success != rhs.Success)
+			return Success < rhs.Success;
+		if (!Success)
+			return Failed < rhs.Failed;
+		return Result < rhs.Result;
+	}
 };
 
 int cnt[34];
@@ -339,10 +346,15 @@ bool isNormal () {
             for (int i = 0; i < 34; i++)
                 if (cnt_tmp[i] >= 3)
                     cnt_tmp[i] -= 3;
-            for (int i = 0; i < 25; i++)
-                if (i != 7 && i != 8 && i != 16 && i != 17)
-                    while (cnt_tmp[i] && cnt_tmp[i + 1] && cnt_tmp[i + 2])
-                        cnt_tmp[i]--, cnt_tmp[i + 1]--, cnt_tmp[i + 2]--;
+            for (int i = 0; i < 7; i++) //0 1 2 3 4 5 6
+                while (cnt_tmp[i] && cnt_tmp[i + 1] && cnt_tmp[i + 2])
+                    cnt_tmp[i]--, cnt_tmp[i + 1]--, cnt_tmp[i + 2]--;
+            for (int i = 9; i < 16; i++) //9 10 11 12 13 14 15
+                while (cnt_tmp[i] && cnt_tmp[i + 1] && cnt_tmp[i + 2])
+                    cnt_tmp[i]--, cnt_tmp[i + 1]--, cnt_tmp[i + 2]--;
+            for (int i = 18; i < 25; i++) //18 19 20 21 22 23 24
+                while (cnt_tmp[i] && cnt_tmp[i + 1] && cnt_tmp[i + 2])
+                    cnt_tmp[i]--, cnt_tmp[i + 1]--, cnt_tmp[i + 2]--;
             if (*std::max_element(cnt_tmp, cnt_tmp + 34) == 0)
                 return true;
         }
@@ -481,6 +493,126 @@ TryAgari Yakuman (AgariPara para) {
     return TryAgari(AgariFailed::NoYaku);
 }
 
+TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
+	return TryAgari(AgariFailed::NoYaku);
+}
+
+TryAgari AgariSearch (const AgariPara &para, int dep, std::vector <Tile> &HandTile, std::vector <Group> &Groups) {
+	if (!HandTile.size())
+		return AgariCalc(para, Groups);
+	TryAgari BestResult;
+	std::vector <Tile> CurTile;
+	std::vector <Group> CurGroups = Groups;
+	unsigned HandSize = HandTile.size();
+    int cnt_tmp[34];
+	memset(cnt_tmp, 0, sizeof cnt_tmp);
+	for (auto handtile : HandTile)
+		cnt_tmp[handtile.GeneralId]++;
+	if (HandSize >= 9) {
+        for (int i = 0; i < 25; i++)
+			if (cnt_tmp[i] >= 3 && cnt_tmp[i + 1] >= 3 && cnt_tmp[i + 2] >= 3)
+				if (i != 7 && i != 8 && i != 16 && i != 17) { // 因为外层合法的情况远比内层少
+					CurTile.clear();
+					int id0 = -1, id1 = -1, id2 = -1;
+					for (unsigned j = 0; j < HandSize; j++)
+						if (HandTile[j].GeneralId == i && id0 == -1)
+							id0 = j;
+						else if (HandTile[j].GeneralId == i + 1 && id1 == -1)
+							id1 = j;
+						else if (HandTile[j].GeneralId == i + 2 && id2 == -1) {
+							id2 = j;
+							break;
+						}
+					for (unsigned j = 0; j < id0; j++)
+						CurTile.pb(HandTile[j]);
+					for (unsigned j = id0 + 3; j < id1; j++)
+						CurTile.pb(HandTile[j]);
+					for (unsigned j = id1 + 3; j < id2; j++)
+						CurTile.pb(HandTile[j]);
+					for (unsigned j = id2 + 3; j < HandSize; j++)
+						CurTile.pb(HandTile[j]);
+					CurGroups.pb(InitSequence(HandTile[id0], HandTile[id1], HandTile[id2]));
+					CurGroups.pb(InitSequence(HandTile[id0 + 1], HandTile[id1 + 1], HandTile[id2 + 1]));
+					CurGroups.pb(InitSequence(HandTile[id0 + 2], HandTile[id1 + 2], HandTile[id2 + 2]));
+					BestResult = std::max(BestResult, AgariSearch(para, dep - 3, HandTile, Groups));
+					CurGroups.pop_back();
+					CurGroups.pop_back();
+					CurGroups.pop_back();
+					CurGroups.pb(InitTriplet(HandTile[id0], HandTile[id0 + 1], HandTile[id0 + 2]));
+					CurGroups.pb(InitTriplet(HandTile[id1], HandTile[id1 + 1], HandTile[id1 + 2]));
+					CurGroups.pb(InitTriplet(HandTile[id2], HandTile[id2 + 1], HandTile[id2 + 2]));
+					BestResult = std::max(BestResult, AgariSearch(para, dep - 3, HandTile, Groups));
+					return BestResult;
+				}
+	}
+	for (int i = 0; i < 34; i++)
+		if (cnt_tmp[i] >= 3) {
+			CurTile.clear();
+			int id = -1;
+			for (unsigned j = 0; j < HandSize; j++)
+				if (HandTile[j].GeneralId == i) {
+					id = j;
+					break;
+				}
+			for (unsigned j = 0; j < id; j++)
+				CurTile.pb(HandTile[j]);
+			for (unsigned j = id + 3; j < HandSize; j++)
+				CurTile.pb(HandTile[j]);
+			CurGroups.pb(InitTriplet(para.HandTile[id], para.HandTile[id + 1], para.HandTile[id + 2]));
+			BestResult = std::max(BestResult, AgariSearch(para, dep - 1, CurTile, CurGroups));
+			CurGroups.pop_back();
+			return BestResult;
+		}
+	for (int i = 0; i < 25; i++)
+		if (cnt_tmp[i] && cnt_tmp[i + 1] && cnt_tmp[i + 2])
+			if (i != 7 && i != 8 && i != 16 && i != 17) {
+				CurTile.clear();
+				int id0 = -1, id1 = -1, id2 = -1;
+				for (unsigned j = 0; j < HandSize; j++)
+					if (HandTile[j].GeneralId == i && id0 == -1)
+						id0 = j;
+					else if (HandTile[j].GeneralId == i + 1 && id1 == -1)
+						id1 = j;
+					else if (HandTile[j].GeneralId == i + 2 && id2 == -1) {
+						id2 = j;
+						break;
+					}
+				for (unsigned j = 0; j < id0; j++)
+					CurTile.pb(HandTile[j]);
+				for (unsigned j = id0 + 1; j < id1; j++)
+					CurTile.pb(HandTile[j]);
+				for (unsigned j = id1 + 1; j < id2; j++)
+					CurTile.pb(HandTile[j]);
+				for (unsigned j = id2 + 1; j < HandSize; j++)
+					CurTile.pb(HandTile[j]);
+				CurGroups.pb(InitSequence(HandTile[id0], HandTile[id1], HandTile[id2]));
+				BestResult = std::max(BestResult, AgariSearch(para, dep - 1, CurTile, CurGroups));
+				CurGroups.pop_back();
+				return BestResult;
+			}
+	return TryAgari(AgariFailed::WrongShape);
+}
+
+TryAgari Normal (const AgariPara &para) {
+	TryAgari BestResult;
+	std::vector <Tile> CurTile;
+	std::vector <Group> CurGroups = para.Groups;
+	unsigned HandSize = para.HandTile.size();
+	for (unsigned i = 1; i < HandSize; i++)
+		if (para.HandTile[i] == para.HandTile[i - 1]) {
+			CurTile.clear();
+			int id = para.HandTile[i].GeneralId;
+			for (unsigned j = 0; j < i - 1; j++)
+				CurTile.pb(para.HandTile[j]);
+			for (unsigned j = i + 1; j < HandSize; j++)
+				CurTile.pb(para.HandTile[j]);
+			CurGroups.pb(InitPair(para.HandTile[i], para.HandTile[i - 1]));
+			BestResult = std::max(BestResult, AgariSearch(para, 4, CurTile, CurGroups));
+			CurGroups.pop_back();
+		}
+	return BestResult;
+}
+
 TryAgari Agari (AgariPara para) {
     std::sort(para.HandTile.begin(), para.HandTile.end());
     TryAgari ClosedResult, Result;
@@ -498,14 +630,13 @@ TryAgari Agari (AgariPara para) {
     cnt[para.Target.GeneralId]++;
     if (!isNormal())
         return TryAgari(AgariFailed::WrongShape);
-    for (auto groups : para.Groups) {
-        auto tiles = groups.getTiles();
-        for (auto tile : tiles)
-            cnt[tile.GeneralId]++;
-    }
     Result = Yakuman(para);
     if (Result.Success)
         return Result;
+	para.HandTile.pb(para.Target);
+    std::sort(para.HandTile.begin(), para.HandTile.end());
+	Result = Normal(para);
+	return std::max(ClosedResult, Result);
 }
 
 #undef sc

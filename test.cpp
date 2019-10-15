@@ -201,6 +201,19 @@ void TestAgari (const int &Id) {
             };
             para.Target = Tile('z', 6);
             Agari(para).Print();
+		case 5:
+			HandTile.clear();
+			HandTile = {
+				Tile('m', 1), Tile('m', 2), Tile('m', 3), Tile('m', 7), Tile('m', 8), Tile('m', 9),
+				Tile('p', 1), Tile('p', 2), Tile('p', 3), Tile('s', 1), Tile('s', 2), Tile('z', 4), Tile('z', 4),
+			};
+			para.HandTile = HandTile;
+			para.Target = Tile('s', 3);
+			para.isTenhou = 0;
+            Agari(para).Print();
+			para.HandTile[1] = Tile('m', 1);
+			para.HandTile[2] = Tile('m', 1);
+            Agari(para).Print();
     }
 }
 
@@ -222,8 +235,8 @@ int main () {
     // TestYaku();
     // TestTile();
     // TestGroup();
-    // TestAgari(4);
-    TestWall();
+    TestAgari(5);
+    // TestWall();
 }
 
 #undef sc
