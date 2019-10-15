@@ -213,15 +213,17 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 			result.Han += 2;
 		}
 	}
-	c = 0;
+	const char* cols = "mps";
+	bool flag3[3];
 	for (int i = 1; i <= 7; i++) {
-		int Id = 0;
-		c = 0;
+		flag3[0] = 0, flag3[1] = 0, flag3[2] = 0;
 		for (auto group : Groups)
 			if (group.Value == i)
-				if (group.Type == GroupType::Sequence && group.Color != 'z')
-					c++;
-		if (c == 3) {
+				if (group.Type == GroupType::Sequence)
+					for (int j = 0; j < 3; j++)
+						if (group.Color == cols[j])
+							flag3[j] = 1;
+		if (flag3[0] && flag3[1] && flag3[2]) {
 			if (para.isClosed) {
 				result.yaku.pb(Yaku::SanshokuClosed);
 				result.Han += 2;
@@ -231,9 +233,8 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 			}
 		}
 	}
-	const char* cols = "mps";
 	for (int i = 0; i < 3; i++) {
-		bool flag3[3] = {0, 0, 0};
+		flag3[0] = 0, flag3[1] = 0, flag3[2] = 0;
 		for (auto group : Groups)
 			if (group.Type == GroupType::Sequence && group.Color == cols[i])
 				if (group.Value % 3 == 1)

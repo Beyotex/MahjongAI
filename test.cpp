@@ -256,6 +256,26 @@ void TestAgari (const int &Id) {
 			para.isTenhou = 0;
 			para.UraDora = {Tile('s', 4)};
 			Agari(para).Print();
+			HandTile.clear();
+			HandTile = {
+				Tile('s', 3), Tile('s', 4), Tile('s', 5, 1), Tile('m', 3), Tile('m', 4), Tile('m', 5, 1), 
+				Tile('p', 3), Tile('p', 4), Tile('p', 5, 1), Tile('p', 4), Tile('p', 3), Tile('s', 6), Tile('s', 6)
+			};
+			para.HandTile = HandTile;
+			para.Target = Tile('p', 5);
+			para.UraDora = {Tile('s', 5)};
+			Agari(para).Print();
+			HandTile.clear();
+			HandTile = {
+				Tile('p', 1), Tile('p', 1), Tile('p', 2), Tile('p', 2), Tile('p', 3), Tile('p', 3),
+				Tile('p', 7), Tile('p', 7), Tile('p', 8), Tile('p', 8), Tile('p', 9), Tile('p', 9), Tile('p', 9)
+			};
+			para.HandTile = HandTile;
+			para.Target = Tile('p', 9);
+			para.ReachTurn = -1;
+			para.AgariType = 1;
+			para.isOneShot = 1;
+			Agari(para).Print();
     }
 }
 
