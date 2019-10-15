@@ -80,8 +80,8 @@ const std::string YakuName [] = {
     "一发 1番",
 	
     "断幺九 1番", 
-    "役牌：门风牌 1番", 
-    "役牌：场风牌 1番", 
+    "役牌 门风牌 1番", 
+    "役牌 场风牌 1番", 
     "役牌 白 1番", 
     "役牌 发 1番", 
     "役牌 中 1番",
@@ -177,16 +177,16 @@ struct Tile {
     inline bool operator != (const Tile &rhs) const {
         return !(*this == rhs);
     }
-    inline std::string Print () {
+    inline std::string Print () const {
         std::string Name;
         Name.pb(isAka ? '0' : Value + '0');
         Name.pb(Color);
         return Name;
     }
-    inline bool isYaochuu () {
+    inline bool isYaochuu () const {
         return Color == 'z' || Value == 1 || Value == 9;
     }
-    inline Tile Next () {
+    inline Tile Next () const {
         if (Color == 'z') {
             if (Value == 4)
                 return Tile('z', 1);

@@ -111,9 +111,9 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 					}
 				if (used)
 					group.State = 7;
-				if (!group.State)
-					c++;
 			}
+			if (!group.State)
+				c++;
 		} else if (group.Type == GroupType::Kan && !group.State)
 			c++;
 	if (c == 3) {
@@ -188,9 +188,9 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
         else
             result.yaku.pb(Yaku::Rinshan);
 	}
-	char col = Groups[0].Color;
-	c = 0;
-	int c1 = 0;
+	char col = Groups[0].Color; // 优先处理数牌
+	c = 1;
+	int c1 = 1;
 	for (unsigned i = 1; i < 5; i++)
 		if (Groups[i].Color == col)
 			c++, c1++;

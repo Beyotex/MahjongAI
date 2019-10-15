@@ -223,6 +223,24 @@ void TestAgari (const int &Id) {
 			para.HandTile[2] = Tile('m', 1);
 			para.UraDora = {Tile('m', 9)};
             Agari(para).Print();
+			break;
+		case 6:
+			HandTile.clear();
+			HandTile = {
+				Tile('p', 1), Tile('p', 1), Tile('p', 1), Tile('p', 5), Tile('p', 5), Tile('p', 5, 1),
+				Tile('p', 8), Tile('p', 8), Tile('z', 1), Tile('z', 1), Tile('z', 1), Tile('z', 6), Tile('z', 6)
+			};
+			para.HandTile = HandTile;
+			para.Target = Tile('z', 6);
+			para.ReachTurn = 13;
+			para.isOneShot = 1;
+			para.AgariType = 0;
+			para.isTenhou = 0;
+			para.Dora = {Tile('z', 5)};
+			para.UraDora = {Tile('p', 7)};
+			Agari(para).Print();
+			para.AgariType = 1;
+			Agari(para).Print();
     }
 }
 
@@ -249,16 +267,7 @@ void TestWall () {
 }
 
 int main () {
-    // TestTile();
-    // TestGroup();
-	// TestAgari(0);
-	// TestAgari(1);
-	// TestAgari(2);
-	// TestAgari(3);
-    // TestAgari(4);
-	TestAgari(5);
-	// TestResult();
-    // TestWall();
+	TestAgari(6);
 }
 
 #undef sc

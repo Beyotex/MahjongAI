@@ -24,15 +24,15 @@ struct AgariPara {
     Tile Target;
     std::vector <Tile> HandTile, Dora, UraDora;
     std::vector <Group> Groups;
-    inline AgariPara () {}
+    inline AgariPara () : ReachTurn(-1), ReachCnt(0), Counters(0), onKan(0), isClosed(1), isOneShot(0), isTenhou(0), isHaitei(0) {}
     inline AgariPara (const Wind &selfwind, const Wind &prevailingwind, const bool &agaritype, 
      const Tile &target,const std::vector <Tile> &handtile, const std::vector <Group> groups = NullGroups,
      const std::vector <Tile> &dora = NullTiles, const std::vector <Tile> &uradora = NullTiles,
      const int &reachturn = -1, const int &reachcnt = 0, const int &counters = 0, const bool &onkan = 0,
 	 const bool &isclosed = 1, const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0)
-     : SelfWind(selfwind), PrevailingWind(prevailingwind), AgariType(agaritype), Target(target),
-     HandTile(handtile), Groups(groups), Dora(dora), UraDora(uradora), ReachTurn(reachturn), ReachCnt(reachcnt),
-     Counters(counters), isClosed(isclosed), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {}
+     : SelfWind(selfwind), PrevailingWind(prevailingwind), AgariType(agaritype), Target(target), HandTile(handtile), 
+     Groups(groups), Dora(dora), UraDora(uradora), ReachTurn(reachturn), ReachCnt(reachcnt), Counters(counters), 
+     onKan(onkan), isClosed(isclosed), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {}
 };
 
 struct AgariResult {
@@ -557,7 +557,7 @@ TryAgari AgariSearch (const AgariPara &para, int dep, std::vector <Tile> &HandTi
 				CurTile.pb(HandTile[j]);
 			for (unsigned j = id + 3; j < HandSize; j++)
 				CurTile.pb(HandTile[j]);
-			CurGroups.pb(InitTriplet(para.HandTile[id], para.HandTile[id + 1], para.HandTile[id + 2]));
+			CurGroups.pb(InitTriplet(HandTile[id], HandTile[id + 1], HandTile[id + 2]));
 			BestResult = std::max(BestResult, AgariSearch(para, dep - 1, CurTile, CurGroups));
 			CurGroups.pop_back();
 			return BestResult;
