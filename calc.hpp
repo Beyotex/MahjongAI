@@ -1,5 +1,5 @@
-#ifndef yaku_hpp
-#define yaku_hpp
+#ifndef calc_hpp
+#define calc_hpp
 
 #include <cstring>
 #include "common.hpp"
@@ -233,21 +233,12 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 	}
 	const char* cols = "mps";
 	for (int i = 0; i < 3; i++) {
-		c = 0;
+		bool flag3[3] = {0, 0, 0};
 		for (auto group : Groups)
 			if (group.Type == GroupType::Sequence && group.Color == cols[i])
-				switch(group.Value) {
-					case 7:
-						c += 4;
-						break;
-					case 4:
-						c += 2;
-						break;
-					case 1:
-						c += 1;
-						break;
-				}
-		if (c == 7) {
+				if (group.Value % 3 == 1)
+					flag3[group.Value / 3] = 1;
+		if (flag3[0] && flag3[1] && flag3[2]) {
 			if (para.isClosed) {
 				result.yaku.pb(Yaku::StraightClosed);
 				result.Han += 2;
@@ -318,4 +309,4 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
     return TryAgari(AgariFailed::NoYaku);
 }
 
-#endif // yaku_hpp
+#endif // calc_hpp

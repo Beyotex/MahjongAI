@@ -29,7 +29,7 @@ struct AgariPara {
      const Tile &target,const std::vector <Tile> &handtile, const std::vector <Group> groups = NullGroups,
      const std::vector <Tile> &dora = NullTiles, const std::vector <Tile> &uradora = NullTiles,
      const int &reachturn = -1, const int &reachcnt = 0, const int &counters = 0, const bool &onkan = 0,
-	 const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0, bool &isclosed = 1)
+	 const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0, const bool &isclosed = 1)
      : SelfWind(selfwind), PrevailingWind(prevailingwind), AgariType(agaritype), Target(target), HandTile(handtile), 
      Groups(groups), Dora(dora), UraDora(uradora), ReachTurn(reachturn), ReachCnt(reachcnt), Counters(counters), 
      onKan(onkan), isClosed(isclosed), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {}
@@ -48,6 +48,8 @@ struct AgariResult {
          AkaDora = UraDora = PlainScore = AgariScore = RonScore = EastScore = OthersScore = 0;
     }
     inline bool operator < (const AgariResult &rhs) const {
+		if (PlainScore == rhs.PlainScore)
+			return Han < rhs.Han;
         return PlainScore < rhs.PlainScore;
     }
     inline bool operator == (const AgariResult &rhs) const {
@@ -170,7 +172,7 @@ struct TryAgari {
 	}
 };
 
-#include "yaku.hpp"
+#include "calc.hpp"
 
 int cnt[34];
 
@@ -560,7 +562,7 @@ TryAgari AgariSearch (const AgariPara &para, int dep, std::vector <Tile> &HandTi
 			CurGroups.pb(InitTriplet(HandTile[id], HandTile[id + 1], HandTile[id + 2]));
 			BestResult = std::max(BestResult, AgariSearch(para, dep - 1, CurTile, CurGroups));
 			CurGroups.pop_back();
-			return BestResult;
+			break;
 		}
 	for (int i = 0; i < 25; i++)
 		if (cnt_tmp[i] && cnt_tmp[i + 1] && cnt_tmp[i + 2])
@@ -587,8 +589,10 @@ TryAgari AgariSearch (const AgariPara &para, int dep, std::vector <Tile> &HandTi
 				CurGroups.pb(InitSequence(HandTile[id0], HandTile[id1], HandTile[id2]));
 				BestResult = std::max(BestResult, AgariSearch(para, dep - 1, CurTile, CurGroups));
 				CurGroups.pop_back();
-				return BestResult;
+				break;
 			}
+	if (BestResult.Success)
+		return BestResult;
 	return TryAgari(AgariFailed::WrongShape);
 }
 
