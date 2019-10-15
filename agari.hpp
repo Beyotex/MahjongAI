@@ -630,9 +630,18 @@ TryAgari Agari (AgariPara para) {
     cnt[para.Target.GeneralId]++;
     if (!isNormal())
         return TryAgari(AgariFailed::WrongShape);
+    for (auto groups : para.Groups) {
+        auto tiles = groups.getTiles();
+        for (auto tile : tiles)
+            cnt[tile.GeneralId]++;
+    }
     Result = Yakuman(para);
     if (Result.Success)
         return Result;
+    memset(cnt, 0, sizeof cnt);
+    for (auto handtile : para.HandTile)
+        cnt[handtile.GeneralId]++;
+    cnt[para.Target.GeneralId]++;
 	para.HandTile.pb(para.Target);
     std::sort(para.HandTile.begin(), para.HandTile.end());
 	Result = Normal(para);

@@ -201,6 +201,7 @@ void TestAgari (const int &Id) {
             };
             para.Target = Tile('z', 6);
             Agari(para).Print();
+			break;
 		case 5:
 			HandTile.clear();
 			HandTile = {
@@ -235,7 +236,7 @@ int main () {
     // TestYaku();
     // TestTile();
     // TestGroup();
-    TestAgari(5);
+    TestAgari(4);
     // TestWall();
 }
 
