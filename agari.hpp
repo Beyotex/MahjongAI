@@ -30,10 +30,10 @@ struct AgariPara {
      const Tile &target,const std::vector <Tile> &handtile, const std::vector <Group> groups = NullGroups,
      const std::vector <Tile> &dora = NullTiles, const std::vector <Tile> &uradora = NullTiles,
      const int &reachturn = -1, const int &reachcnt = 0, const int &counters = 0, const bool &onkan = 0,
-	 const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0, const bool &isclosed = 1)
+	 const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0)
      : SelfWind(selfwind), PrevailingWind(prevailingwind), AgariType(agaritype), Target(target), HandTile(handtile), 
      Groups(groups), Dora(dora), UraDora(uradora), ReachTurn(reachturn), ReachCnt(reachcnt), Counters(counters), 
-     onKan(onkan), isClosed(isclosed), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {}
+     onKan(onkan), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {}
 };
 
 struct AgariResult {
@@ -625,9 +625,14 @@ TryAgari Normal (const AgariPara &para) {
 }
 
 TryAgari Agari (AgariPara para) {
+	int c = 4 - para.Groups.size();
+	for (auto group : para.Groups)
+		if (!group.State)
+			c++;
+	para.isClosed = (c == 4);
     std::sort(para.HandTile.begin(), para.HandTile.end());
     TryAgari ClosedResult, Result;
-    if (para.isClosed) {
+    if (para.isClosed && para.Groups.empty()) {
         ClosedResult = ThirteenOrphans(para);
         if (ClosedResult.Success)
             return ClosedResult;

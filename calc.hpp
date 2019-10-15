@@ -280,12 +280,52 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 			result.Fu += fu;
 		}
 	}
-	if (result.Fu == 20)
-		if (para.isClosed) {
-			result.yaku.pb(Yaku::Pinfu);
-			result.Han += 1;
-		} else
-			result.Fu = 30;
+	if (result.Fu == 20 && !para.isClosed)
+		result.Fu = 30;
+	if (result.Fu == 20) { // 平和可能，试图拆解为好型
+		char stdcol = para.Target.Color;
+		int stdid = para.Target.Value;
+		int Add = 2;
+		for (auto group : Groups)
+			if (group.Type == GroupType::Sequence && group.Color == stdcol) {
+				int curid = group.Value;
+				if (stdid == curid + 1 && Add)
+					Add = 2;
+				else if (((stdid == 7 && curid == 7) || (stdid == 3 && curid == 1)) && Add)
+					Add = 2;
+				else
+					Add = 0;
+			}
+			// 因为有平和可能，不可能存在双碰
+			// 当且仅当能够拆解为两面时可以达成平和
+			// 所以忽略了单吊 其实边张、嵌张也可以忽略
+		result.Fu += Add;
+	}
+	if (result.Fu > 20) { // 不平和，试图拆解为愚型
+		char stdcol = para.Target.Color;
+		int stdid = para.Target.Value;
+		int Add = 0;
+		for (auto group : Groups)
+			if (group.Color == stdcol) {
+				if (group.Type == GroupType::Sequence) {
+					int curid = group.Value;
+					if (stdid == curid + 1)
+						Add = 2;
+					else if ((stdid == 7 && curid == 7) || (stdid == 3 && curid == 1))
+						Add = 2;
+					else if (!Add)
+						Add = 0;
+				} else if (group.Type == GroupType::Pair)
+					Add = 2;
+			}
+			// 与平和型恰恰相反
+			// 忽略了双碰 因为尽可能拆解为愚型
+			// 其实两面也可以忽略
+	}
+	if (result.Fu == 20) {
+		result.yaku.pb(Yaku::Pinfu);
+		result.Han += 1;
+	}
 	if (!para.AgariType && result.Fu != 20)
 		result.Fu += 2;
 	if (para.isClosed && para.AgariType)
