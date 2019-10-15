@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cassert>
 #include <cstring>
+#include <cctype>
 #include "common.hpp"
 #define sc static_cast
 #define pb push_back
@@ -17,6 +18,43 @@ const std::string ManganName [] = {
 
 inline int Roundup10 (int a) { return (a + 9) / 10 * 10;}
 inline int Roundup100 (int a) { return (a + 99) / 100 * 100;}
+
+void Parse (const std::string &Hand, std::vector <Tile> &HandTile, std::vector <Group> &Groups) {
+	unsigned len = Hand.size();
+	std::string::size_type index = Hand.find('#'), lastind = 0;
+	const char *cols = "mpsz";
+	for (int i = 0; i < 4; i++) {
+		std::string::size_type ind1 = Hand.find(cols[i]);
+		if (ind1 != std::string::npos)
+			for (unsigned j = lastind; j < ind1; j++)
+				if (isdigit(Hand[j])) {
+					if (Hand[j] == '0')
+						HandTile.pb(Tile(cols[i], 5, 1));
+					else
+						HandTile.pb(Tile(cols[i], Hand[j] - '0'));
+				}
+		lastind = ind1;
+	}
+	std::vector <Tile> t;
+	if (index != std::string::npos)
+		for (unsigned j = index + 1; j < len; j++)
+			if (isalpha(Hand[j])) {
+				t.clear();
+				for (unsigned k = std::max(j - 4, 0u); k < j; k++)
+					if (isdigit(Hand[k])) {
+						if (Hand[k] == '0')
+							t.pb(Tile(Hand[j], 5, 1));
+						else
+							t.pb(Tile(Hand[j], Hand[k] - '0'));
+					}
+				if (t.size() == 4)
+					Groups.pb(InitKan(t[0], t[1], t[2], t[3], islower(Hand[j])));
+				else if (t[0] == t[1])
+					Groups.pb(InitTriplet(t[0], t[1], t[2], 1));
+				else
+					Groups.pb(InitSequence(t[0], t[1], t[2], 1));
+			}
+}
 
 struct AgariPara {
     Wind SelfWind, PrevailingWind;
@@ -34,6 +72,15 @@ struct AgariPara {
      : SelfWind(selfwind), PrevailingWind(prevailingwind), AgariType(agaritype), Target(target), HandTile(handtile), 
      Groups(groups), Dora(dora), UraDora(uradora), ReachTurn(reachturn), ReachCnt(reachcnt), Counters(counters), 
      onKan(onkan), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {}
+    inline AgariPara (const Wind &selfwind, const Wind &prevailingwind, const bool &agaritype, const Tile &target, 
+     const std::string& Hand, const std::vector <Tile> &dora = NullTiles, const std::vector <Tile> &uradora = NullTiles,
+     const int &reachturn = -1, const int &reachcnt = 0, const int &counters = 0, const bool &onkan = 0,
+	 const bool &isoneshot = 0, const bool &istenhou = 0, const bool &ishaitei = 0)
+     : SelfWind(selfwind), PrevailingWind(prevailingwind), AgariType(agaritype), Target(target),
+	 Dora(dora), UraDora(uradora), ReachTurn(reachturn), ReachCnt(reachcnt), Counters(counters), 
+     onKan(onkan), isOneShot(isoneshot), isTenhou(istenhou), isHaitei(ishaitei) {
+		 Parse(Hand, HandTile, Groups);
+	}
 };
 
 struct AgariResult {

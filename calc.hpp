@@ -321,6 +321,7 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 			// 与平和型恰恰相反
 			// 忽略了双碰 因为尽可能拆解为愚型
 			// 其实两面也可以忽略
+		result.Fu += Add;
 	}
 	if (result.Fu == 20) {
 		result.yaku.pb(Yaku::Pinfu);
