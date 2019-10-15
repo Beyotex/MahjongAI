@@ -627,7 +627,7 @@ TryAgari Agari (AgariPara para) {
     for (auto handtile : para.HandTile)
         cnt[handtile.GeneralId]++;
     cnt[para.Target.GeneralId]++;
-    if (!isNormal())
+    if (!ClosedResult.Success && !isNormal())
         return TryAgari(AgariFailed::WrongShape);
     for (auto groups : para.Groups) {
         auto tiles = groups.getTiles();

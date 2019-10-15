@@ -89,6 +89,7 @@ void TestAgari (const int &Id) {
             TryAgari(result).Print();
             break;
         case 2:
+			para.SelfWind = Wind::East;
             HandTile.clear();
             for (int i = 1; i <= 7; i++) {
                 HandTile.pb(Tile('z', i));
@@ -211,11 +212,20 @@ void TestAgari (const int &Id) {
 			para.HandTile = HandTile;
 			para.Target = Tile('s', 3);
 			para.isTenhou = 0;
+			para.ReachTurn = 1;
             Agari(para).Print();
 			para.HandTile[1] = Tile('m', 1);
 			para.HandTile[2] = Tile('m', 1);
             Agari(para).Print();
     }
+}
+
+void TestResult () {
+	AgariResult result1, result2;
+	result1.PlainScore = 1000, result2.PlainScore = 1300;
+	std::cout << (TryAgari(result1) < TryAgari(result2)) << ' '
+	 << (TryAgari(AgariFailed::NoYaku) < TryAgari(result1)) << ' '
+	 << (TryAgari() < TryAgari(AgariFailed::NoYaku)) << std::endl;
 }
 
 void TestWall () {
@@ -233,10 +243,15 @@ void TestWall () {
 }
 
 int main () {
-    // TestYaku();
     // TestTile();
     // TestGroup();
-    TestAgari(4);
+	// TestAgari(0);
+	// TestAgari(1);
+	// TestAgari(2);
+	// TestAgari(3);
+    // TestAgari(4);
+	TestAgari(5);
+	// TestResult();
     // TestWall();
 }
 

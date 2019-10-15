@@ -208,7 +208,7 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 	for (int i = 0; i < 3; i++) {
 		c = 0;
 		for (auto group : Groups)
-			if (group.Type == GroupType::Sequence && group.Color == cols[i]) {
+			if (group.Type == GroupType::Sequence && group.Color == cols[i])
 				switch(group.Value) {
 					case 7:
 						c += 4;
@@ -220,7 +220,6 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 						c += 1;
 						break;
 				}
-			}
 		if (c == 7) {
 			if (para.isClosed) {
 				result.yaku.pb(Yaku::StraightClosed);
@@ -231,12 +230,12 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 			}
 			break;
 		}
+	}
     if (result.Han > 0) {
         result.GetScore(para);
         return result;
     }
     return TryAgari(AgariFailed::NoYaku);
-	}
 }
 
 #endif // yaku_hpp
