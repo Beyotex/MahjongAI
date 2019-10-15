@@ -92,7 +92,6 @@ void TestAgari (const int &Id) {
             break;
         case 2:
 			para.SelfWind = Wind::East;
-            HandTile.clear();
             for (int i = 1; i <= 7; i++) {
                 HandTile.pb(Tile('z', i));
                 if (i != 7)
@@ -102,7 +101,6 @@ void TestAgari (const int &Id) {
             para.HandTile = HandTile;
             para.isTenhou = 1;
             Agari(para).Print();
-            HandTile.clear();
             for (int i = 1; i <= 7; i++) {
                 HandTile.pb(Tile('p', i));
                 if (i != 5)
@@ -143,7 +141,6 @@ void TestAgari (const int &Id) {
             break;
         case 3:
             std::cout << isAgari(HandTile, Tile("7z")) << std::endl;
-            HandTile.clear();
             for (int i = 1; i <= 7; i++) {
                 HandTile.pb(Tile('p', i));
                 if (i != 5)
@@ -151,7 +148,6 @@ void TestAgari (const int &Id) {
             }
             std::cout << isAgari(HandTile, Tile("0s")) << std::endl;
             std::cout << isAgari(HandTile, Tile("0p")) << std::endl;
-            HandTile.clear();
             HandTile = {
                 Tile('z', 3), Tile('z', 3), Tile('z', 3), Tile('m', 3), Tile('m', 4), Tile('m', 5, 1),
                 Tile('p', 3), Tile('p', 4), Tile('p', 5, 1), Tile('s', 3), Tile('s', 4), Tile('z', 7), Tile('z', 7)
@@ -161,7 +157,6 @@ void TestAgari (const int &Id) {
             std::cout << isAgari(HandTile, Tile("0s")) << std::endl;
             break;
         case 4:
-            HandTile.clear();
             HandTile = {
                 Tile('z', 1), Tile('z', 1), Tile('z', 1), Tile('z', 2), Tile('z', 2), Tile('z', 2),
                 Tile('z', 3), Tile('z', 3), Tile('z', 3), Tile('z', 4), Tile('z', 4), Tile('z', 4), Tile('z', 5)
@@ -175,7 +170,6 @@ void TestAgari (const int &Id) {
             Agari(para).Print();
             para.AgariType = 1;
             Agari(para).Print();
-            HandTile.clear();
             HandTile = {
                 Tile('m', 1), Tile('m', 1), Tile('m', 1), Tile('p', 1), Tile('p', 1), Tile('p', 1),
                 Tile('p', 9), Tile('p', 9), Tile('p', 9), Tile('s', 1), Tile('s', 1), Tile('s', 1), Tile('m', 9)
@@ -183,7 +177,6 @@ void TestAgari (const int &Id) {
             para.HandTile = HandTile;
             para.Target = Tile("9m");
             Agari(para).Print();
-            HandTile.clear();
             HandTile = {
                 Tile('s', 1), Tile('s', 1), Tile('s', 1), Tile('s', 2), Tile('s', 3), Tile('s', 4),
                 Tile('s', 5, 1), Tile('s', 6), Tile('s', 8), Tile('s', 9), Tile('s', 9), Tile('s', 9), Tile('s', 6)
@@ -206,7 +199,6 @@ void TestAgari (const int &Id) {
             Agari(para).Print();
 			break;
 		case 5:
-			HandTile.clear();
 			HandTile = {
 				Tile('m', 1), Tile('m', 2), Tile('m', 3), Tile('m', 7), Tile('m', 8), Tile('m', 9),
 				Tile('p', 1), Tile('p', 2), Tile('p', 3), Tile('s', 1), Tile('s', 2), Tile('z', 4), Tile('z', 4),
@@ -225,7 +217,6 @@ void TestAgari (const int &Id) {
             Agari(para).Print();
 			break;
 		case 6:
-			HandTile.clear();
 			HandTile = {
 				Tile('p', 1), Tile('p', 1), Tile('p', 1), Tile('p', 5), Tile('p', 5), Tile('p', 5, 1),
 				Tile('p', 8), Tile('p', 8), Tile('z', 1), Tile('z', 1), Tile('z', 1), Tile('z', 6), Tile('z', 6)
@@ -243,7 +234,6 @@ void TestAgari (const int &Id) {
 			Agari(para).Print();
 			break;
 		case 7:
-			HandTile.clear();
 			HandTile = {
 				Tile('s', 1), Tile('s', 2), Tile('s', 3), Tile('s', 2), Tile('s', 3), Tile('s', 4), Tile('s', 5),
 				Tile('s', 5, 1), Tile('s', 5), Tile('s', 6), Tile('s', 7), Tile('s', 8), Tile('s', 9)
@@ -256,7 +246,6 @@ void TestAgari (const int &Id) {
 			para.isTenhou = 0;
 			para.UraDora = {Tile('s', 4)};
 			Agari(para).Print();
-			HandTile.clear();
 			HandTile = {
 				Tile('s', 3), Tile('s', 4), Tile('s', 5, 1), Tile('m', 3), Tile('m', 4), Tile('m', 5, 1), 
 				Tile('p', 3), Tile('p', 4), Tile('p', 5, 1), Tile('p', 4), Tile('p', 3), Tile('s', 6), Tile('s', 6)
@@ -265,7 +254,6 @@ void TestAgari (const int &Id) {
 			para.Target = Tile('p', 5);
 			para.UraDora = {Tile('s', 5)};
 			Agari(para).Print();
-			HandTile.clear();
 			HandTile = {
 				Tile('p', 1), Tile('p', 1), Tile('p', 2), Tile('p', 2), Tile('p', 3), Tile('p', 3),
 				Tile('p', 7), Tile('p', 7), Tile('p', 8), Tile('p', 8), Tile('p', 9), Tile('p', 9), Tile('p', 9)
@@ -275,6 +263,45 @@ void TestAgari (const int &Id) {
 			para.ReachTurn = -1;
 			para.AgariType = 1;
 			para.isOneShot = 1;
+			Agari(para).Print();
+			break;
+		case 8:
+			para.isTenhou = 0;
+			HandTile = {
+				Tile('s', 1), Tile('s', 1), Tile('s', 9), Tile('s', 9), Tile('z', 1), Tile('z', 1),
+				Tile('z', 2), Tile('z', 2), Tile('z', 3), Tile('z', 3), Tile('z', 4), Tile('z', 4), Tile('z', 5)
+			};
+			para.HandTile = HandTile;
+			para.Target = Tile('z', 5);
+			para.ReachTurn = 1;
+			para.AgariType = 1;
+			para.isOneShot = 1;
+			para.Dora = {Tile('z', 4)};
+			para.UraDora = {Tile('s', 8)};
+			Agari(para).Print();
+			HandTile = {
+				Tile('m', 3), Tile('m', 3), Tile('m', 3), Tile('p', 3), Tile('p', 3), Tile('p', 3),
+				Tile('s', 3), Tile('s', 3), Tile('s', 3), Tile('s', 3), Tile('s', 4), Tile('s', 5), Tile('s', 5)
+			};
+			para.HandTile = HandTile;
+			para.Target = Tile('s', 5);
+			para.UraDora = {Tile('s', 2)};
+			Agari(para).Print();
+			HandTile = {
+				Tile('m', 5), Tile('m', 5), Tile('m', 5), Tile('p', 5), Tile('p', 5), Tile('p', 5),
+				Tile('s', 5), Tile('s', 5), Tile('s', 5), Tile('s', 5), Tile('s', 4), Tile('s', 3), Tile('s', 3)
+			};
+			para.HandTile = HandTile;
+			para.Target = Tile('s', 3);
+			para.UraDora = {Tile('s', 4)};
+			Agari(para).Print();
+			HandTile = {
+				Tile('s', 3), Tile('s', 3), Tile('s', 3), Tile('s', 4), Tile('s', 4), Tile('s', 4), 
+				Tile('s', 2), Tile('s', 2), Tile('s', 2), Tile('s', 3), Tile('s', 4), Tile('s', 2), Tile('s', 6)
+			};
+			para.HandTile = HandTile;
+			para.Target = Tile('s', 6);
+			para.UraDora = {Tile('s', 1)};
 			Agari(para).Print();
     }
 }
@@ -302,7 +329,7 @@ void TestWall () {
 }
 
 int main () {
-	TestAgari(7);
+	TestAgari(8);
 }
 
 #undef sc

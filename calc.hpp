@@ -7,6 +7,9 @@
 
 // 未完成：流满
 TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
+	for (auto group : Groups)
+		std::cout << group.Print() << ' ';
+	std::cout << std::endl;
 	AgariResult result;
 	bool AS = 1;
 	for (auto group : Groups)

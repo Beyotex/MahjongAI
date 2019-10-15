@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <cassert>
 #include <cstring>
 #include "common.hpp"
 #define sc static_cast
@@ -499,6 +500,11 @@ TryAgari Yakuman (AgariPara para) {
 }
 
 TryAgari AgariSearch (const AgariPara &para, int dep, std::vector <Tile> &HandTile, std::vector <Group> &Groups) {
+	assert(dep >= 0);
+	std::cout << dep << ' ';
+	for (auto group : Groups)
+		std::cout << group.Print() << ' ';
+	std::cout << std::endl;
 	if (!HandTile.size())
 		return AgariCalc(para, Groups);
 	TryAgari BestResult;
