@@ -2,6 +2,7 @@
 #define calc_hpp
 
 #include <cstring>
+#include <algorithm>
 #include "common.hpp"
 #include "agari.hpp"
 
@@ -10,6 +11,7 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
 //    for (auto group : Groups)
 //        std::cout << group.Print() << ' ';
 //    std::cout << std::endl;
+    std::sort(Groups.begin(), Groups.end());
     AgariResult result;
     bool AS = 1;
     for (auto group : Groups)
@@ -191,7 +193,7 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
         else
             result.yaku.pb(Yaku::Rinshan);
     }
-    char col = Groups[0].Color; // 优先处理数牌
+    char col = Groups[0].Color;
     c = 1;
     int c1 = 1;
     for (unsigned i = 1; i < 5; i++)

@@ -19,10 +19,10 @@ struct Group { // 面子或雀头
     std::vector <Tile> getTiles(bool Full = 0);
     std::string Print(); // 打印该面子或雀头
 };
-Group InitPair(Tile a, Tile b); // 构造雀头
-Group InitTriplet(Tile a, Tile b, Tile c, int state = 0); // 构造刻子
-Group InitKan(Tile a, Tile b, Tile c, Tile d, int state = 0); // 构造杠子
-Group InitSequence(Tile a, Tile b, Tile c, int state = 0); // 构造顺子
+Group InitPair(Tile a, Tile b); // 创建雀头
+Group InitTriplet(Tile a, Tile b, Tile c, int state = 0); // 创建刻子
+Group InitKan(Tile a, Tile b, Tile c, Tile d, int state = 0); // 创建杠子
+Group InitSequence(Tile a, Tile b, Tile c, int state = 0); // 创建顺子
 // 以上三个函数中的最后一张牌可以是所鸣的牌，state 见函数周围的注释
 ```
 
@@ -31,13 +31,13 @@ Group InitSequence(Tile a, Tile b, Tile c, int state = 0); // 构造顺子
 struct AgariPara { // 和牌参数
     // 把 Hand 中的手牌和鸣牌（副露和暗杠）分别填入 HandTile 和 Groups
     // Hand 的格式为 手牌 # 鸣牌，手牌部分需按照万、筒、索、字排序，同一种花色的牌只需在写完全部编号后写花色
-    // 鸣牌部分每个面子需分开写，暗杠的花色变为大写字母；无鸣牌时可以不出现 #
+    // 鸣牌部分每个面子需分开写，暗杠的花色变为大写字母；未鸣牌时无需出现 #
     void Parse(const std::string &Hand);
     
     // selfwind, prevailingwind：自风，场风
     // agaritype：和牌方式。为 0 表示自摸，为 1 表示荣和
     // target：所和的牌
-    // handtile, groups：手牌和鸣牌；或 Hand：手牌字符串，格式如上一个函数的 Parse
+    // handtile, groups：手牌和鸣牌；或 Hand：手牌字符串，格式如上一个函数的 Hand
     // 以上为必须参数（groups 可以为空）
     // dora, uradora：宝牌指示牌，里宝牌指示牌
     // reachturn：立直巡目。为 -1 表示未立直
