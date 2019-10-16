@@ -153,6 +153,16 @@ struct AgariResult {
         PlainScore = AgariScore;
         AgariScore += para.ReachCnt * 1000 + Counters * 300;
     }
+    void ProcessCounters () {
+        if (isTsumo) {
+            OthersScore += Counters * 100;
+            if (!isEast)
+                EastScore += Counters * 100;
+        }
+        else
+            RonScore += Counters * 300;
+        Counters = 0;
+    }
 };
 
 enum struct AgariFailed {
@@ -203,16 +213,6 @@ struct TryAgari {
         }
         else
             std::cout << Result.PlainScore << std::endl;
-    }
-    void ProcessCounters () {
-        if (Result.isTsumo) {
-            Result.OthersScore += Result.Counters * 100;
-            if (!Result.isEast)
-                Result.EastScore += Result.Counters * 100;
-        }
-        else
-            Result.RonScore += Result.Counters * 300;
-        Result.Counters = 0;
     }
 	inline bool operator < (const TryAgari &rhs) const {
 		if (Success != rhs.Success)

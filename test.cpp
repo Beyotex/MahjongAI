@@ -325,9 +325,11 @@ void TestWall () {
     for (int i = 14; i; i--)
         std::cout << wall.FullWall[136 - i].Print() << ' ';
     std::cout << std::endl;
+	std::cout << wall.DoraCnt() << std::endl;
     std::cout << wall.getDora(0).Print() << ' ' << wall.getUraDora(0).Print() << std::endl;
     std::cout << wall.getNext().Print() << std::endl;
     std::cout << wall.Kan().Print() << std::endl;
+	std::cout << wall.DoraCnt() << std::endl;
     std::cout << wall.getDora(1).Print() << ' ' << wall.getUraDora(1).Print() << std::endl;
     std::cout << wall.LeftTiles() << std::endl;
 }
