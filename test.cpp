@@ -236,6 +236,19 @@ void TestAgari (const int &Id) {
             para.Parse("3334442228886s");
             Agari(para).Print();
             break;
+        case 9:
+            para.isTenhou = 0;
+            para.Parse("2220m # 123m 456m 789m");
+            para.Target = Tile('m', 5);
+            para.AgariType = 0;
+            para.Dora = {Tile('m', 1), Tile('m', 4)};
+            Agari(para).Print();
+            para.Parse("6z # 234s 234s 234s 234s");
+            para.Target = Tile('s', 6);
+            para.AgariType = 1;
+            Agari(para).Print();
+            para.Target = Tile('z', 6);
+            Agari(para).Print();
     }
 }
 
@@ -264,10 +277,10 @@ void TestWall () {
 }
 
 int main () {
-	for (int i = 0; i < 9; i++) {
-		std::cout << "Test " << i << std::endl;
-		TestAgari(i);
-	}
+    for (int i = 0; i < 10; i++) {
+        std::cout << "Test #" << i << std::endl;
+        TestAgari(i);
+    }
 }
 
 #undef sc

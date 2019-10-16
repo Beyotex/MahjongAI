@@ -33,7 +33,7 @@ struct AgariPara {
         const char *cols = "mpsz";
         for (int i = 0; i < 4; i++) {
             std::string::size_type ind1 = Hand.find(cols[i]);
-            if (ind1 != std::string::npos)
+            if (ind1 != std::string::npos && ind1 < index)
                 for (unsigned j = lastind; j < ind1; j++)
                     if (isdigit(Hand[j])) {
                         if (Hand[j] == '0')
@@ -41,7 +41,7 @@ struct AgariPara {
                         else
                             HandTile.pb(Tile(cols[i], Hand[j] - '0'));
                     }
-            if (ind1 != std::string::npos)
+            if (ind1 != std::string::npos && ind1 < index)
                 lastind = ind1;
         }
         std::vector <Tile> t;
@@ -164,11 +164,49 @@ struct AgariResult {
             RonScore += Counters * 300;
         Counters = 0;
     }
+    void Print () {
+        for (auto yaku : yaku)
+            std::cout << YakuName[sc <int> (yaku)] << std::endl;
+        if (Han > 0 && yaku[0] != Yaku::NagashiMangan) {
+            if (Dora > 0)
+                std::cout << "宝牌 " << Dora << "番" << std::endl;
+            if (AkaDora > 0)
+                std::cout << "红宝牌 " << AkaDora << "番" << std::endl;
+            if (Reach)
+                std::cout << "里宝牌 " << UraDora << "番" << std::endl;
+        }
+        if (Han > 0 && yaku[0] != Yaku::NagashiMangan)
+            std::cout << Han << "番" << Fu << "符" << ' ';
+        if (Han < 0)
+            std::cout << ManganName[4 - Han] << ' ';
+        else {
+            int ManganLevel = PlainScore / 2000;
+            if (isEast)
+                ManganLevel = ManganLevel * 2 / 3;
+            ManganLevel >>= 1;
+            if (ManganLevel > 2)
+                std::cout << ManganName[ManganLevel >> 1] << ' ';
+            else if (ManganLevel == 2)
+                std::cout << ManganName[0] << ' ';
+        }
+        if (isTsumo) {
+            std::cout << PlainScore << " (";
+            if (isEast)
+                std::cout << OthersScore << "All";
+            else
+                std::cout << OthersScore << "-" << EastScore;
+            std::cout << ")\n";
+        }
+        else
+            std::cout << PlainScore << std::endl;
+    }
 };
 
 enum struct AgariFailed {
     Null, WrongShape, NoYaku,
 };
+
+const char * AgariFailedName[] = {"内部错误", "非和牌型", "无役"};
 
 struct TryAgari {
     AgariResult Result;
@@ -177,50 +215,18 @@ struct TryAgari {
     inline TryAgari () : Failed(AgariFailed::Null), Success(false) {}
     inline TryAgari (const AgariResult &result) : Result(result), Success(true) {}
     inline TryAgari (const AgariFailed &failed) : Failed(failed), Success(false) {}
-    void Print() {
-        if (!Success) {
-            std::cout << "Failed " << sc <int> (Failed) << std::endl;
-            return;
-        }
-        for (auto yaku : Result.yaku)
-            std::cout << YakuName[sc <int> (yaku)] << std::endl;
-        if (Result.Han > 0 && Result.yaku[0] != Yaku::NagashiMangan) {
-            if (Result.Dora > 0)
-                std::cout << "宝牌 " << Result.Dora << "番" << std::endl;
-            if (Result.AkaDora > 0)
-                std::cout << "红宝牌 " << Result.AkaDora << "番" << std::endl;
-            if (Result.Reach)
-                std::cout << "里宝牌 " << Result.UraDora << "番" << std::endl;
-        }
-        if (Result.Han > 0 && Result.yaku[0] != Yaku::NagashiMangan)
-            std::cout << Result.Han << "番" << Result.Fu << "符" << ' ';
-        if (Result.Han < 0)
-            std::cout << ManganName[4 - Result.Han] << ' ';
-        else {
-            int ManganLevel = Result.PlainScore / 2000;
-            if (Result.isEast)
-                ManganLevel = ManganLevel * 2 / 3;
-            ManganLevel >>= 1;
-            if (ManganLevel > 2)
-                std::cout << ManganName[ManganLevel >> 1] << ' ';
-            else if (ManganLevel == 2)
-                std::cout << ManganName[0] << ' ';
-        }
-        if (Result.isTsumo) {
-            if (Result.isEast)
-                std::cout << Result.OthersScore << "All" << std::endl;
-            else
-                std::cout << Result.OthersScore << "-" << Result.EastScore << std::endl;
-        }
-        else
-            std::cout << Result.PlainScore << std::endl;
-    }
     inline bool operator < (const TryAgari &rhs) const {
         if (Success != rhs.Success)
             return Success < rhs.Success;
         if (!Success)
             return Failed < rhs.Failed;
         return Result < rhs.Result;
+    }
+    inline void Print () {
+        if (Success)
+            Result.Print();
+        else
+            std::cout << AgariFailedName[sc <int> (Failed)] << std::endl;
     }
 };
 
@@ -660,23 +666,23 @@ TryAgari Normal (const AgariPara &para) {
     std::vector <Tile> CurTile;
     std::vector <Group> CurGroups = para.Groups;
     unsigned HandSize = para.HandTile.size();
-	for (int i = 0; i < 34; i++)
-		if (cnt[i] >= 2) {
-			CurTile.clear();
-			int id = -1;
-			for (unsigned j = 0; j < HandSize; j++)
-				if (para.HandTile[j].GeneralId == i) {
-					id = j;
-					break;
-				}
-			for (unsigned j = 0; j < id; j++)
-				CurTile.pb(para.HandTile[j]);
-			for (unsigned j = id + 2; j < HandSize; j++)
-				CurTile.pb(para.HandTile[j]);
-			CurGroups.pb(InitPair(para.HandTile[id], para.HandTile[id + 1]));
-			BestResult = std::max(BestResult, AgariSearch(para, 4, CurTile, CurGroups));
-			CurGroups.pop_back();
-		}
+    for (int i = 0; i < 34; i++)
+        if (cnt[i] >= 2) {
+            CurTile.clear();
+            int id = -1;
+            for (unsigned j = 0; j < HandSize; j++)
+                if (para.HandTile[j].GeneralId == i) {
+                    id = j;
+                    break;
+                }
+            for (unsigned j = 0; j < id; j++)
+                CurTile.pb(para.HandTile[j]);
+            for (unsigned j = id + 2; j < HandSize; j++)
+                CurTile.pb(para.HandTile[j]);
+            CurGroups.pb(InitPair(para.HandTile[id], para.HandTile[id + 1]));
+            BestResult = std::max(BestResult, AgariSearch(para, 4, CurTile, CurGroups));
+            CurGroups.pop_back();
+        }
     return BestResult;
 }
 
@@ -702,7 +708,7 @@ TryAgari Agari (AgariPara para) {
     cnt[para.Target.GeneralId]++;
     if (!isNormal())
         return Attempt0.Success ? Attempt0 : TryAgari(AgariFailed::WrongShape);
-	std::vector <Tile> tmpHand = para.HandTile;
+    std::vector <Tile> tmpHand = para.HandTile;
     para.HandTile.pb(para.Target);
     std::sort(para.HandTile.begin(), para.HandTile.end());
     Attempt1 = Normal(para);
@@ -711,7 +717,7 @@ TryAgari Agari (AgariPara para) {
         for (auto tile : tiles)
             cnt[tile.GeneralId]++;
     }
-	para.HandTile = tmpHand;
+    para.HandTile = tmpHand;
     Attempt2 = Yakuman(para);
     if (Attempt2.Success)
         return Attempt2;
