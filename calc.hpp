@@ -278,8 +278,8 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
             if (!group.State)
                 fu <<= 1;
             result.Fu += fu;
-		}
-	}
+        }
+    }
     if (result.Fu == 20 && !para.isClosed && para.AgariType)
         result.Fu = 30;
     if (result.Fu == 20) { // 平和可能，试图拆解为好型
@@ -288,16 +288,16 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
         int Add = 2;
         for (auto group : Groups)
             if (group.Color == stdcol)
-				if (group.Type == GroupType::Sequence) {
-					int curid = group.Value;
-					if (stdid == curid + 1 && Add)
-						Add = 2;
-					else if (((stdid == 7 && curid == 7) || (stdid == 3 && curid == 1)) && Add)
-						Add = 2; 
-					else
-						Add = 0;
-				} else if (group.Type == GroupType::Pair && Add)
-						Add = 2;
+                if (group.Type == GroupType::Sequence) {
+                    int curid = group.Value;
+                    if (stdid == curid + 1 && Add)
+                        Add = 2;
+                    else if (((stdid == 7 && curid == 7) || (stdid == 3 && curid == 1)) && Add)
+                        Add = 2; 
+                    else
+                        Add = 0;
+                } else if (group.Type == GroupType::Pair && Add)
+                        Add = 2;
             // 因为有平和可能，不可能存在双碰
             // 当且仅当能够拆解为两面时可以达成平和
         result.Fu += Add;
@@ -311,14 +311,14 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
                 if (group.Type == GroupType::Sequence) {
                     int curid = group.Value;
                     if (stdid == curid + 1)
-						Add = 2;
-					else if ((stdid == 7 && curid == 7) || (stdid == 3 && curid == 1))
-						Add = 2;
-					else if (!Add)
+                        Add = 2;
+                    else if ((stdid == 7 && curid == 7) || (stdid == 3 && curid == 1))
+                        Add = 2;
+                    else if (!Add)
                         Add = 0;
                 } else if (group.Type == GroupType::Pair)
-						Add = 2;
-			}
+                        Add = 2;
+            }
             // 与平和型恰恰相反
             // 忽略了双碰 因为尽可能拆解为愚型
             // 其实两面也可以忽略

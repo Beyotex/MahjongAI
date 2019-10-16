@@ -130,7 +130,7 @@ void TestAgari (const int &Id) {
             para.Parse("1122334456677p");
             std::cout << isAgari(para.HandTile, Tile("0s")) << std::endl;
             std::cout << isAgari(para.HandTile, Tile("0p")) << std::endl;
-			para.Parse("340m 340p 34s 33377z");
+            para.Parse("340m 340p 34s 33377z");
             std::cout << isAgari(para.HandTile, Tile("0s")) << std::endl;
             para.HandTile[10] = Tile('z', 7);
             std::cout << isAgari(para.HandTile, Tile("0s")) << std::endl;
@@ -160,7 +160,7 @@ void TestAgari (const int &Id) {
             Agari(para).Print();
             break;
         case 5:
-			para.Parse("123789m 123p 12s 44z");
+            para.Parse("123789m 123p 12s 44z");
             para.Target = Tile('s', 3);
             para.isTenhou = 0;
             para.ReachTurn = 1;
@@ -168,8 +168,8 @@ void TestAgari (const int &Id) {
             para.AgariType = 0;
             para.Dora = {Tile('z', 3)};
             Agari(para).Print();
-			para.HandTile[9] = Tile('s', 3);
-			para.Target = Tile('s', 1);
+            para.HandTile[9] = Tile('s', 3);
+            para.Target = Tile('s', 1);
             Agari(para).Print();
             para.HandTile[1] = Tile('m', 1);
             para.HandTile[2] = Tile('m', 1);
@@ -177,7 +177,7 @@ void TestAgari (const int &Id) {
             Agari(para).Print();
             break;
         case 6:
-			para.Parse("11155088p 66z # 1111Z");
+            para.Parse("11155088p 66z # 1111Z");
             para.Target = Tile('z', 6);
             para.ReachTurn = 13;
             para.isOneShot = 1;
@@ -190,7 +190,7 @@ void TestAgari (const int &Id) {
             Agari(para).Print();
             break;
         case 7:
-			para.Parse("1232345056789s");
+            para.Parse("1232345056789s");
             para.Target = Tile('s', 1);
             para.ReachTurn = 13;
             para.isOneShot = 1;
@@ -198,11 +198,11 @@ void TestAgari (const int &Id) {
             para.isTenhou = 0;
             para.UraDora = {Tile('s', 4)};
             Agari(para).Print();
-			para.Parse("340m 34043p 34066s");
+            para.Parse("340m 34043p 34066s");
             para.Target = Tile('p', 5);
             para.UraDora = {Tile('s', 5)};
             Agari(para).Print();
-			para.Parse("1122337788999p");
+            para.Parse("1122337788999p");
             para.Target = Tile('p', 9);
             para.ReachTurn = -1;
             para.AgariType = 1;
@@ -211,7 +211,7 @@ void TestAgari (const int &Id) {
             break;
         case 8:
             para.isTenhou = 0;
-			para.Parse("1199s 112233445z");
+            para.Parse("1199s 112233445z");
             para.Target = Tile('z', 5);
             para.ReachTurn = 1;
             para.AgariType = 1;
@@ -219,21 +219,21 @@ void TestAgari (const int &Id) {
             para.Dora = {Tile('z', 4)};
             para.UraDora = {Tile('s', 8)};
             Agari(para).Print();
-			para.Parse("333m 333p 3333455s");
+            para.Parse("333m 333p 3333455s");
             para.Target = Tile('s', 5);
             para.UraDora = {Tile('s', 2)};
             Agari(para).Print();
-			para.Parse("555m 555p 5555433s");
+            para.Parse("555m 555p 5555433s");
             para.Target = Tile('s', 3);
             para.UraDora = {Tile('s', 4)};
             Agari(para).Print();
-			para.Parse("3334442223456s");
+            para.Parse("3334442223456s");
             para.Target = Tile('s', 6);
             para.UraDora = {Tile('s', 1)};
             Agari(para).Print();
-			para.Parse("3334442223426s");
+            para.Parse("3334442223426s");
             Agari(para).Print();
-			para.Parse("3334442228886s");
+            para.Parse("3334442228886s");
             Agari(para).Print();
             break;
     }
@@ -264,7 +264,10 @@ void TestWall () {
 }
 
 int main () {
-    TestAgari(8);
+	for (int i = 0; i < 9; i++) {
+		std::cout << "Test " << i << std::endl;
+		TestAgari(i);
+	}
 }
 
 #undef sc

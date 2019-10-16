@@ -29,11 +29,11 @@ Group InitSequence(Tile a, Tile b, Tile c, int state = 0); // 构造顺子
 ## `agari.hpp`：计算得点
 ```cpp
 struct AgariPara { // 和牌参数
-	// 把 Hand 中的手牌和鸣牌（副露和暗杠）分别填入 HandTile 和 Groups
-	// Hand 的格式为 手牌 # 鸣牌，手牌部分需按照万、筒、索、字排序，同一种花色的牌只需在写完全部编号后写花色
-	// 鸣牌部分每个面子需分开写，暗杠的花色变为大写字母；无鸣牌时可以不出现 #
-	void Parse(const std::string &Hand);
-	
+    // 把 Hand 中的手牌和鸣牌（副露和暗杠）分别填入 HandTile 和 Groups
+    // Hand 的格式为 手牌 # 鸣牌，手牌部分需按照万、筒、索、字排序，同一种花色的牌只需在写完全部编号后写花色
+    // 鸣牌部分每个面子需分开写，暗杠的花色变为大写字母；无鸣牌时可以不出现 #
+    void Parse(const std::string &Hand);
+    
     // selfwind, prevailingwind：自风，场风
     // agaritype：和牌方式。为 0 表示自摸，为 1 表示荣和
     // target：所和的牌
