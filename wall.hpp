@@ -51,9 +51,9 @@ struct Wall {
     inline int LeftTiles () {
         return HaiteiId + 1 - WallId;
     }
-	inline int DoraCnt () {
-		return 122 - HaiteiId;
-	}
+    inline int DoraCnt () {
+        return 122 - HaiteiId;
+    }
 };
 
 #endif // wall_hpp

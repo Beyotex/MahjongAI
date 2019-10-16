@@ -49,13 +49,9 @@ void TestGroup () {
 }
 
 void TestAgari (const int &Id) {
-    std::vector <Tile> HandTile = {
-        Tile('m', 1), Tile('m', 9), Tile('p', 1), Tile('p', 9), Tile('s', 1), Tile('s', 9),
-        Tile('z', 1), Tile('z', 2), Tile('z', 3), Tile('z', 4), Tile('z', 5), Tile('z', 6), Tile('z', 6)
-    };
-    AgariPara para(Wind::East, Wind::East, 0, Tile("1s"), HandTile);
-	para.isTenhou = 1;
-	para.AgariType = 0;
+    AgariPara para(Wind::East, Wind::East, 0, Tile("1s"), "19m 19p 19s 1234566z");
+    para.isTenhou = 1;
+    para.AgariType = 0;
     AgariResult result;
     switch (Id) {
         case 0:
@@ -91,23 +87,13 @@ void TestAgari (const int &Id) {
             TryAgari(result).Print();
             break;
         case 2:
-			para.SelfWind = Wind::East;
-            for (int i = 1; i <= 7; i++) {
-                HandTile.pb(Tile('z', i));
-                if (i != 7)
-                    HandTile.pb(Tile('z', i));
-            }
+            para.SelfWind = Wind::East;
+            para.Parse("1122334455667z");
             para.Target = Tile("7z");
-            para.HandTile = HandTile;
             para.isTenhou = 1;
             Agari(para).Print();
-            for (int i = 1; i <= 7; i++) {
-                HandTile.pb(Tile('p', i));
-                if (i != 5)
-                    HandTile.pb(Tile('p', i));
-            }
+            para.Parse("1122334456677p");
             para.Target = Tile("0s");
-            para.HandTile = HandTile;
             para.isTenhou = 0;
             Agari(para).Print();
             para.Target = Tile("1p");
@@ -140,29 +126,18 @@ void TestAgari (const int &Id) {
             Agari(para).Print();
             break;
         case 3:
-            std::cout << isAgari(HandTile, Tile("7z")) << std::endl;
-            for (int i = 1; i <= 7; i++) {
-                HandTile.pb(Tile('p', i));
-                if (i != 5)
-                    HandTile.pb(Tile('p', i));
-            }
-            std::cout << isAgari(HandTile, Tile("0s")) << std::endl;
-            std::cout << isAgari(HandTile, Tile("0p")) << std::endl;
-            HandTile = {
-                Tile('z', 3), Tile('z', 3), Tile('z', 3), Tile('m', 3), Tile('m', 4), Tile('m', 5, 1),
-                Tile('p', 3), Tile('p', 4), Tile('p', 5, 1), Tile('s', 3), Tile('s', 4), Tile('z', 7), Tile('z', 7)
-            };
-            std::cout << isAgari(HandTile, Tile("0s")) << std::endl;
-            HandTile[2] = Tile('z', 7);
-            std::cout << isAgari(HandTile, Tile("0s")) << std::endl;
+            std::cout << isAgari(para.HandTile, Tile("7z")) << std::endl;
+            para.Parse("1122334456677p");
+            std::cout << isAgari(para.HandTile, Tile("0s")) << std::endl;
+            std::cout << isAgari(para.HandTile, Tile("0p")) << std::endl;
+			para.Parse("340m 340p 34s 33377z");
+            std::cout << isAgari(para.HandTile, Tile("0s")) << std::endl;
+            para.HandTile[10] = Tile('z', 7);
+            std::cout << isAgari(para.HandTile, Tile("0s")) << std::endl;
             break;
         case 4:
-            HandTile = {
-                Tile('z', 1), Tile('z', 1), Tile('z', 1), Tile('z', 2), Tile('z', 2), Tile('z', 2),
-                Tile('z', 3), Tile('z', 3), Tile('z', 3), Tile('z', 4), Tile('z', 4), Tile('z', 4), Tile('z', 5)
-            };
+            para.Parse("1112223334445z");
             para.SelfWind = Wind::East;
-            para.HandTile = HandTile;
             para.Target = Tile("5z");
             Agari(para).Print();
             para.HandTile[11] = Tile("5z");
@@ -170,152 +145,106 @@ void TestAgari (const int &Id) {
             Agari(para).Print();
             para.AgariType = 1;
             Agari(para).Print();
-            HandTile = {
-                Tile('m', 1), Tile('m', 1), Tile('m', 1), Tile('p', 1), Tile('p', 1), Tile('p', 1),
-                Tile('p', 9), Tile('p', 9), Tile('p', 9), Tile('s', 1), Tile('s', 1), Tile('s', 1), Tile('m', 9)
-            };
-            para.HandTile = HandTile;
+            para.Parse("1119m 111999p 111s");
             para.Target = Tile("9m");
             Agari(para).Print();
-            HandTile = {
-                Tile('s', 1), Tile('s', 1), Tile('s', 1), Tile('s', 2), Tile('s', 3), Tile('s', 4),
-                Tile('s', 5, 1), Tile('s', 6), Tile('s', 8), Tile('s', 9), Tile('s', 9), Tile('s', 9), Tile('s', 6)
-            };
-            para.HandTile = HandTile;
+            para.Parse("1112340689996s");
             para.Target = Tile("7s");
             Agari(para).Print();
             para.isTenhou = 1;
             para.AgariType = 0;
             Agari(para).Print();
             para.isTenhou = 0;
-            para.HandTile = {Tile('z', 6)};
-            para.Groups = {
-                InitKan(Tile('z', 1), Tile('z', 1), Tile('z', 1), Tile('z', 1)),
-                InitKan(Tile('z', 2), Tile('z', 2), Tile('z', 2), Tile('z', 2)),
-                InitKan(Tile('z', 3), Tile('z', 3), Tile('z', 3), Tile('z', 3)),
-                InitKan(Tile('z', 4), Tile('z', 4), Tile('z', 4), Tile('z', 4))
-            };
+            para.Parse("6z # 1111Z 2222Z 3333Z 4444Z");
             para.Target = Tile('z', 6);
             Agari(para).Print();
-			break;
-		case 5:
-			HandTile = {
-				Tile('m', 1), Tile('m', 2), Tile('m', 3), Tile('m', 7), Tile('m', 8), Tile('m', 9),
-				Tile('p', 1), Tile('p', 2), Tile('p', 3), Tile('s', 1), Tile('s', 2), Tile('z', 4), Tile('z', 4),
-			};
-			para.HandTile = HandTile;
-			para.Target = Tile('s', 3);
-			para.isTenhou = 0;
-			para.ReachTurn = 1;
-			para.isOneShot = 1;
-			para.AgariType = 0;
-			para.Dora = {Tile('z', 3)};
+            break;
+        case 5:
+			para.Parse("123789m 123p 12s 44z");
+            para.Target = Tile('s', 3);
+            para.isTenhou = 0;
+            para.ReachTurn = 1;
+            para.isOneShot = 1;
+            para.AgariType = 0;
+            para.Dora = {Tile('z', 3)};
             Agari(para).Print();
-			para.HandTile[1] = Tile('m', 1);
-			para.HandTile[2] = Tile('m', 1);
-			para.UraDora = {Tile('m', 9)};
-            Agari(para).Print();
-			break;
-		case 6:
-			HandTile = {
-				Tile('p', 1), Tile('p', 1), Tile('p', 1), Tile('p', 5), Tile('p', 5), Tile('p', 5, 1),
-				Tile('p', 8), Tile('p', 8), Tile('z', 1), Tile('z', 1), Tile('z', 1), Tile('z', 6), Tile('z', 6)
-			};
-			para.HandTile = HandTile;
-			para.Target = Tile('z', 6);
-			para.ReachTurn = 13;
-			para.isOneShot = 1;
-			para.AgariType = 0;
-			para.isTenhou = 0;
-			para.Dora = {Tile('z', 5)};
-			para.UraDora = {Tile('p', 7)};
-			Agari(para).Print();
-			para.AgariType = 1;
-			Agari(para).Print();
-			break;
-		case 7:
-			HandTile = {
-				Tile('s', 1), Tile('s', 2), Tile('s', 3), Tile('s', 2), Tile('s', 3), Tile('s', 4), Tile('s', 5),
-				Tile('s', 5, 1), Tile('s', 5), Tile('s', 6), Tile('s', 7), Tile('s', 8), Tile('s', 9)
-			};
-			para.HandTile = HandTile;
+			para.HandTile[9] = Tile('s', 3);
 			para.Target = Tile('s', 1);
-			para.ReachTurn = 13;
-			para.isOneShot = 1;
-			para.AgariType = 0;
-			para.isTenhou = 0;
-			para.UraDora = {Tile('s', 4)};
-			Agari(para).Print();
-			HandTile = {
-				Tile('s', 3), Tile('s', 4), Tile('s', 5, 1), Tile('m', 3), Tile('m', 4), Tile('m', 5, 1), 
-				Tile('p', 3), Tile('p', 4), Tile('p', 5, 1), Tile('p', 4), Tile('p', 3), Tile('s', 6), Tile('s', 6)
-			};
-			para.HandTile = HandTile;
-			para.Target = Tile('p', 5);
-			para.UraDora = {Tile('s', 5)};
-			Agari(para).Print();
-			HandTile = {
-				Tile('p', 1), Tile('p', 1), Tile('p', 2), Tile('p', 2), Tile('p', 3), Tile('p', 3),
-				Tile('p', 7), Tile('p', 7), Tile('p', 8), Tile('p', 8), Tile('p', 9), Tile('p', 9), Tile('p', 9)
-			};
-			para.HandTile = HandTile;
-			para.Target = Tile('p', 9);
-			para.ReachTurn = -1;
-			para.AgariType = 1;
-			para.isOneShot = 1;
-			Agari(para).Print();
-			break;
-		case 8:
-			para.isTenhou = 0;
-			HandTile = {
-				Tile('s', 1), Tile('s', 1), Tile('s', 9), Tile('s', 9), Tile('z', 1), Tile('z', 1),
-				Tile('z', 2), Tile('z', 2), Tile('z', 3), Tile('z', 3), Tile('z', 4), Tile('z', 4), Tile('z', 5)
-			};
-			para.HandTile = HandTile;
-			para.Target = Tile('z', 5);
-			para.ReachTurn = 1;
-			para.AgariType = 1;
-			para.isOneShot = 1;
-			para.Dora = {Tile('z', 4)};
-			para.UraDora = {Tile('s', 8)};
-			Agari(para).Print();
-			HandTile = {
-				Tile('m', 3), Tile('m', 3), Tile('m', 3), Tile('p', 3), Tile('p', 3), Tile('p', 3),
-				Tile('s', 3), Tile('s', 3), Tile('s', 3), Tile('s', 3), Tile('s', 4), Tile('s', 5), Tile('s', 5)
-			};
-			para.HandTile = HandTile;
-			para.Target = Tile('s', 5);
-			para.UraDora = {Tile('s', 2)};
-			Agari(para).Print();
-			HandTile = {
-				Tile('m', 5), Tile('m', 5), Tile('m', 5), Tile('p', 5), Tile('p', 5), Tile('p', 5),
-				Tile('s', 5), Tile('s', 5), Tile('s', 5), Tile('s', 5), Tile('s', 4), Tile('s', 3), Tile('s', 3)
-			};
-			para.HandTile = HandTile;
-			para.Target = Tile('s', 3);
-			para.UraDora = {Tile('s', 4)};
-			Agari(para).Print();
-			HandTile = {
-				Tile('s', 3), Tile('s', 3), Tile('s', 3), Tile('s', 4), Tile('s', 4), Tile('s', 4), 
-				Tile('s', 2), Tile('s', 2), Tile('s', 2), Tile('s', 3), Tile('s', 4), Tile('s', 5), Tile('s', 6)
-			};
-			para.HandTile = HandTile;
-			para.Target = Tile('s', 6);
-			para.UraDora = {Tile('s', 1)};
-			Agari(para).Print();
-			para.HandTile[11] = Tile('s', 2);
-			Agari(para).Print();
-			para.HandTile[9] = para.HandTile[10] = para.HandTile[11] = Tile('s', 8);
-			Agari(para).Print();
+            Agari(para).Print();
+            para.HandTile[1] = Tile('m', 1);
+            para.HandTile[2] = Tile('m', 1);
+            para.UraDora = {Tile('m', 9)};
+            Agari(para).Print();
+            break;
+        case 6:
+			para.Parse("11155088p 66z # 1111Z");
+            para.Target = Tile('z', 6);
+            para.ReachTurn = 13;
+            para.isOneShot = 1;
+            para.AgariType = 0;
+            para.isTenhou = 0;
+            para.Dora = {Tile('z', 5), Tile('p', 4)};
+            para.UraDora = {Tile('p', 7), Tile('z', 4)};
+            Agari(para).Print();
+            para.AgariType = 1;
+            Agari(para).Print();
+            break;
+        case 7:
+			para.Parse("1232345056789s");
+            para.Target = Tile('s', 1);
+            para.ReachTurn = 13;
+            para.isOneShot = 1;
+            para.AgariType = 0;
+            para.isTenhou = 0;
+            para.UraDora = {Tile('s', 4)};
+            Agari(para).Print();
+			para.Parse("340m 34043p 34066s");
+            para.Target = Tile('p', 5);
+            para.UraDora = {Tile('s', 5)};
+            Agari(para).Print();
+			para.Parse("1122337788999p");
+            para.Target = Tile('p', 9);
+            para.ReachTurn = -1;
+            para.AgariType = 1;
+            para.isOneShot = 1;
+            Agari(para).Print();
+            break;
+        case 8:
+            para.isTenhou = 0;
+			para.Parse("1199s 112233445z");
+            para.Target = Tile('z', 5);
+            para.ReachTurn = 1;
+            para.AgariType = 1;
+            para.isOneShot = 1;
+            para.Dora = {Tile('z', 4)};
+            para.UraDora = {Tile('s', 8)};
+            Agari(para).Print();
+			para.Parse("333m 333p 3333455s");
+            para.Target = Tile('s', 5);
+            para.UraDora = {Tile('s', 2)};
+            Agari(para).Print();
+			para.Parse("555m 555p 5555433s");
+            para.Target = Tile('s', 3);
+            para.UraDora = {Tile('s', 4)};
+            Agari(para).Print();
+			para.Parse("3334442223456s");
+            para.Target = Tile('s', 6);
+            para.UraDora = {Tile('s', 1)};
+            Agari(para).Print();
+			para.Parse("3334442223426s");
+            Agari(para).Print();
+			para.Parse("3334442228886s");
+            Agari(para).Print();
+            break;
     }
 }
 
 void TestResult () {
-	AgariResult result1, result2;
-	result1.PlainScore = 1000, result2.PlainScore = 1300;
-	std::cout << (TryAgari(result1) < TryAgari(result2)) << ' '
-	 << (TryAgari(AgariFailed::NoYaku) < TryAgari(result1)) << ' '
-	 << (TryAgari() < TryAgari(AgariFailed::NoYaku)) << std::endl;
+    AgariResult result1, result2;
+    result1.PlainScore = 1000, result2.PlainScore = 1300;
+    std::cout << (TryAgari(result1) < TryAgari(result2)) << ' '
+     << (TryAgari(AgariFailed::NoYaku) < TryAgari(result1)) << ' '
+     << (TryAgari() < TryAgari(AgariFailed::NoYaku)) << std::endl;
 }
 
 void TestWall () {
@@ -325,17 +254,17 @@ void TestWall () {
     for (int i = 14; i; i--)
         std::cout << wall.FullWall[136 - i].Print() << ' ';
     std::cout << std::endl;
-	std::cout << wall.DoraCnt() << std::endl;
+    std::cout << wall.DoraCnt() << std::endl;
     std::cout << wall.getDora(0).Print() << ' ' << wall.getUraDora(0).Print() << std::endl;
     std::cout << wall.getNext().Print() << std::endl;
     std::cout << wall.Kan().Print() << std::endl;
-	std::cout << wall.DoraCnt() << std::endl;
+    std::cout << wall.DoraCnt() << std::endl;
     std::cout << wall.getDora(1).Print() << ' ' << wall.getUraDora(1).Print() << std::endl;
     std::cout << wall.LeftTiles() << std::endl;
 }
 
 int main () {
-	TestAgari(8);
+    TestAgari(8);
 }
 
 #undef sc
