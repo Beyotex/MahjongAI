@@ -165,8 +165,8 @@ struct AgariResult {
         Counters = 0;
     }
     void Print () {
-        for (auto yaku : yaku)
-            std::cout << YakuName[sc <int> (yaku)] << std::endl;
+        for (auto y : yaku)
+            std::cout << YakuName[sc <int> (y)] << std::endl;
         if (Han > 0 && yaku[0] != Yaku::NagashiMangan) {
             if (Dora > 0)
                 std::cout << "宝牌 " << Dora << "番" << std::endl;
