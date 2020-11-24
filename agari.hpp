@@ -394,9 +394,10 @@ TryAgari SevenPairs (AgariPara para) {
                 result.AkaDora++;
         if (para.Target.isAka)
             result.AkaDora++;
-        for (auto uradora : para.UraDora)
-            if (cnt[uradora.Next().GeneralId])
-                result.UraDora += 2;
+        if (para.ReachTurn > 0)
+            for (auto uradora : para.UraDora)
+                if (cnt[uradora.Next().GeneralId])
+                    result.UraDora += 2;
         result.Han += result.Dora + result.AkaDora + result.UraDora;
     }
     result.GetScore(para);
