@@ -185,8 +185,7 @@ TryAgari AgariCalc (const AgariPara &para, std::vector <Group> &Groups) {
             result.yaku.pb(Yaku::Houtei);
         else
             result.yaku.pb(Yaku::Haitei);
-    }
-    if (para.onKan) {
+    } else if (para.onKan) {
         result.Han += 1;
         if (para.AgariType)
             result.yaku.pb(Yaku::Chankan);
