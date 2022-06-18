@@ -49,7 +49,7 @@ struct AgariPara {
             for (unsigned j = index + 1; j < len; j++)
                 if (isalpha(Hand[j])) {
                     t.clear();
-                    for (unsigned k = std::max(j - 4, 0u); k < j; k++)
+                    for (int k = std::max(j - 4, index); k < j; k++)
                         if (isdigit(Hand[k])) {
                             if (Hand[k] == '0')
                                 t.pb(Tile(tolower(Hand[j]), 5, 1));
